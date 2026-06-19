@@ -1,0 +1,53 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: ScopeRegistry
+metadata:
+  name: kernloom-canonical-scopes
+  version: "0.2.0"
+spec:
+  entityScopes:
+    - id: src_ip
+      entityType: network
+      description: Source IP address.
+    - id: dst_ip
+      entityType: network
+      description: Destination IP address.
+    - id: endpoint
+      entityType: network
+      description: IP and port endpoint.
+    - id: ip_port
+      entityType: network
+      description: IP and port tuple.
+    - id: five_tuple
+      entityType: communication_edge
+      description: Source IP, source port, destination IP, destination port and protocol.
+    - id: node
+      entityType: component
+      description: Single local node or runtime component.
+    - id: service
+      entityType: resource
+      description: Logical service or API endpoint.
+    - id: workload
+      entityType: workload
+      description: Workload, pod, service account or equivalent compute identity.
+    - id: subject
+      entityType: subject
+      description: Human, service account or automation identity.
+    - id: device
+      entityType: device
+      description: Endpoint or compute device.
+    - id: session
+      entityType: session
+      description: Authentication or access session.
+    - id: communication_edge
+      entityType: communication_edge
+      description: Relationship between two communicating entities.
+  visibilityScopes:
+    - id: local
+      description: Single node or local KLIQ view.
+    - id: site
+      description: Site, cluster or local environment view.
+    - id: tenant
+      description: Tenant-wide view.
+    - id: global
+      description: Cross-tenant or global view; usually not allowed for customer policy decisions.
+

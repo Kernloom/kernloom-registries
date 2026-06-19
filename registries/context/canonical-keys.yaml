@@ -1,0 +1,311 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: ContextKeyRegistry
+metadata:
+  name: kernloom-canonical-context
+  version: "0.2.0"
+spec:
+  keys:
+    - id: subject.id
+      type: string
+      scope: subject
+      sensitivity: low
+      defaultTTL: 8h
+    - id: subject.type
+      type: string_enum
+      values: [user, service_account, workload, device_identity, automation_identity, external_partner]
+      scope: subject
+      sensitivity: low
+      defaultTTL: 8h
+    - id: subject.role
+      type: string
+      scope: subject
+      sensitivity: low
+      defaultTTL: 8h
+      permittedSources: [identity_provider, cmdb, forge]
+    - id: subject.group
+      type: string_list
+      scope: subject
+      sensitivity: low
+      defaultTTL: 8h
+      permittedSources: [identity_provider]
+    - id: subject.identity_assurance
+      type: string_enum
+      values: [none, low, medium, high, very_high]
+      scope: subject
+      sensitivity: low
+      defaultTTL: 8h
+      permittedSources: [identity_provider]
+    - id: subject.employment_status
+      type: string_enum
+      values: [active, on_leave, offboarding, terminated, contractor, unknown]
+      scope: subject
+      sensitivity: medium
+      defaultTTL: 1h
+      permittedSources: [hr_system, identity_provider]
+    - id: subject.risk.level
+      type: string_enum
+      values: [low, medium, high, critical, unknown]
+      scope: subject
+      sensitivity: medium
+      defaultTTL: 30m
+      permittedSources: [kernloom_risk_engine, correlate]
+    - id: subject.behavior.anomaly_detected
+      type: boolean
+      scope: subject
+      sensitivity: medium
+      defaultTTL: 15m
+      permittedSources: [kliq, correlate, kernloom_risk_engine]
+    - id: device.id
+      type: string
+      scope: device
+      sensitivity: low
+      defaultTTL: 24h
+    - id: device.management.status
+      type: string_enum
+      values: [managed, unmanaged, unknown]
+      scope: device
+      sensitivity: low
+      defaultTTL: 1h
+      permittedSources: [mdm, cmdb]
+    - id: device.posture.status
+      type: string_enum
+      values: [healthy, degraded, unhealthy, unknown]
+      scope: device
+      sensitivity: medium
+      defaultTTL: 15m
+      permittedSources: [edr, mdm, kernloom_risk_engine]
+    - id: device.edr.status
+      type: string_enum
+      values: [healthy, unhealthy, unknown]
+      scope: device
+      sensitivity: medium
+      defaultTTL: 10m
+      permittedSources: [edr]
+    - id: device.attestation.status
+      type: string_enum
+      values: [attested, not_attested, failed, unknown]
+      scope: device
+      sensitivity: medium
+      defaultTTL: 1h
+      permittedSources: [trust, keylime]
+    - id: device.risk.level
+      type: string_enum
+      values: [low, medium, high, critical, unknown]
+      scope: device
+      sensitivity: medium
+      defaultTTL: 30m
+      permittedSources: [kernloom_risk_engine, correlate]
+    - id: resource.id
+      type: string
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+    - id: resource.type
+      type: string_enum
+      values: [application, application_group, api, service, database, storage, secret, network_segment, infrastructure_asset]
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+    - id: resource.application_group
+      type: string
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, forge]
+    - id: resource.data_class
+      type: string_enum
+      values: [public, internal, confidential, restricted, secret]
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, forge]
+    - id: resource.criticality
+      type: string_enum
+      values: [low, medium, high, critical]
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, forge]
+    - id: resource.environment
+      type: string_enum
+      values: [development, staging, production, dr]
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, forge]
+    - id: resource.owner
+      type: string
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb]
+    - id: resource.exposure
+      type: string_enum
+      values: [internal, partner, internet, unknown]
+      scope: resource
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, network_pip, forge]
+    - id: session.id
+      type: string
+      scope: session
+      sensitivity: medium
+      defaultTTL: 1h
+    - id: session.authentication.strength
+      type: string_enum
+      values: [none, password, mfa, phishing_resistant_mfa]
+      scope: session
+      sensitivity: low
+      defaultTTL: 8h
+      permittedSources: [identity_provider]
+    - id: session.location
+      type: string
+      scope: session
+      sensitivity: medium
+      defaultTTL: 1h
+      permittedSources: [identity_provider, network_pip]
+    - id: session.network_zone
+      type: string_enum
+      values: [internal, dmz, external, vpn, zero_trust_overlay, unknown]
+      scope: session
+      sensitivity: low
+      defaultTTL: 1h
+      permittedSources: [network_pip, identity_provider]
+    - id: session.risk.level
+      type: string_enum
+      values: [low, medium, high, critical, unknown]
+      scope: session
+      sensitivity: medium
+      defaultTTL: 30m
+      permittedSources: [kernloom_risk_engine, identity_provider]
+    - id: environment.id
+      type: string
+      scope: environment
+      sensitivity: low
+      defaultTTL: 24h
+    - id: environment.type
+      type: string_enum
+      values: [development, staging, production, dr]
+      scope: environment
+      sensitivity: low
+      defaultTTL: 24h
+    - id: environment.trust_zone
+      type: string_enum
+      values: [trusted, partially_trusted, untrusted, unknown]
+      scope: environment
+      sensitivity: low
+      defaultTTL: 24h
+    - id: workload.id
+      type: string
+      scope: workload
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [kubernetes, workload_platform, forge]
+    - id: workload.namespace
+      type: string
+      scope: workload
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [kubernetes, workload_platform]
+    - id: workload.service_account
+      type: string
+      scope: workload
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [kubernetes, workload_platform, identity_provider]
+    - id: workload.image.identity
+      type: string
+      scope: workload
+      sensitivity: medium
+      defaultTTL: 24h
+      permittedSources: [kubernetes, workload_platform, registry_scanner]
+    - id: workload.attestation.status
+      type: string_enum
+      values: [attested, not_attested, failed, unknown]
+      scope: workload
+      sensitivity: medium
+      defaultTTL: 1h
+      permittedSources: [trust, keylime, workload_platform]
+    - id: workload.environment
+      type: string_enum
+      values: [development, staging, production, dr]
+      scope: workload
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [kubernetes, workload_platform, cmdb, forge]
+    - id: network.source
+      type: string
+      scope: network
+      sensitivity: medium
+      defaultTTL: 5m
+      permittedSources: [kliq, network_pip]
+    - id: network.destination
+      type: string
+      scope: network
+      sensitivity: medium
+      defaultTTL: 5m
+      permittedSources: [kliq, network_pip]
+    - id: network.protocol
+      type: string_enum
+      values: [tcp, udp, icmp, other, unknown]
+      scope: network
+      sensitivity: low
+      defaultTTL: 5m
+      permittedSources: [kliq, network_pip]
+    - id: network.port
+      type: integer
+      scope: network
+      sensitivity: low
+      defaultTTL: 5m
+      permittedSources: [kliq, network_pip]
+    - id: network.zone
+      type: string_enum
+      values: [internal, dmz, external, vpn, zero_trust_overlay, unknown]
+      scope: network
+      sensitivity: low
+      defaultTTL: 1h
+      permittedSources: [network_pip, cmdb]
+    - id: communication.edge.status
+      type: string_enum
+      values: [known, candidate, first_seen, anomalous, denied, expired]
+      scope: communication_edge
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [kliq, correlate]
+    - id: communication.edge.first_seen_at
+      type: string
+      scope: communication_edge
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [kliq, correlate]
+    - id: component.pip.health
+      type: string_enum
+      values: [healthy, degraded, unavailable]
+      scope: component
+      sensitivity: low
+      defaultTTL: 1m
+    - id: data.classification
+      type: string_enum
+      values: [public, internal, confidential, restricted, secret]
+      scope: data
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, dlp, forge]
+    - id: data.residency
+      type: string
+      scope: data
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, data_catalog]
+    - id: data.owner
+      type: string
+      scope: data
+      sensitivity: low
+      defaultTTL: 24h
+      permittedSources: [cmdb, data_catalog]
+    - id: data.processing_purpose
+      type: string
+      scope: data
+      sensitivity: medium
+      defaultTTL: 24h
+      permittedSources: [data_catalog, forge]

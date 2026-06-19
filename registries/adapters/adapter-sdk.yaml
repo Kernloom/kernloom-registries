@@ -1,0 +1,38 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: AdapterSDKRegistry
+metadata:
+  name: kernloom-adapter-sdk
+  version: "0.2.0"
+spec:
+  roles:
+    - pip_read
+    - feature_extractor
+    - signal_engine
+    - risk_engine
+    - runtime_pdp
+    - pep
+    - config_adapter
+    - export
+  targetTypes:
+    - local_pep
+    - vendor_sub_control_plane
+    - identity_system
+    - network_device
+    - workload_platform
+    - data_system
+    - observability_system
+  manifestRequirements:
+    - adapter_id
+    - adapter_version
+    - roles
+    - target_type
+    - provides
+    - consumes
+    - label_policy
+    - trust_boundary
+  conformance:
+    provides.metrics: must_reference_metric_registry
+    provides.signals: must_reference_signal_registry
+    consumes.actions: must_reference_capability_registry
+    selected_labels: must_reference_label_policy_registry
+    vendor_native_semantics: must_declare_mapping_or_delegation

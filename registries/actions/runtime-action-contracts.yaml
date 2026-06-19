@@ -1,0 +1,221 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: RuntimeActionContractRegistry
+metadata:
+  name: kernloom-runtime-action-contracts
+  version: "0.2.0"
+spec:
+  contracts:
+    - id: enforce.access.deny
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.access.default_deny
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.network.rate_limit
+      level: soft
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 1h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [kliq, correlate]
+      requiredConfidence: medium
+      canGrantAccess: false
+    - id: enforce.network.syn_protect
+      level: soft
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 1h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [kliq, correlate]
+      requiredConfidence: medium
+      canGrantAccess: false
+    - id: enforce.network.deny
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate, kliq]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.network.default_deny
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.network.quarantine
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 2h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.traffic.rate_limit
+      level: soft
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 1h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [kliq, correlate]
+      requiredConfidence: medium
+      canGrantAccess: false
+    - id: enforce.traffic.connection_limit
+      level: soft
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 1h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [kliq, correlate]
+      requiredConfidence: medium
+      canGrantAccess: false
+    - id: enforce.traffic.bandwidth_limit
+      level: soft
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 1h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [kliq, correlate]
+      requiredConfidence: medium
+      canGrantAccess: false
+    - id: enforce.traffic.tarpit
+      level: hard
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate, kliq]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.traffic.drop
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate, kliq]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.traffic.quarantine
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 10m
+      maxTTL: 2h
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
+    - id: enforce.access.allow
+      level: observe
+      effect: grant
+      monotonicity: may_grant_access
+      runtimeAllowed: false
+      configPathOnly: true
+      requiresApproval: true
+      reversible: true
+      canGrantAccess: true
+    - id: enforce.network.allow
+      level: observe
+      effect: grant
+      monotonicity: may_grant_access
+      runtimeAllowed: false
+      configPathOnly: true
+      requiresApproval: true
+      reversible: true
+      canGrantAccess: true
+

@@ -1,0 +1,53 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: RuntimeActionRegistry
+metadata:
+  name: kernloom-runtime-actions
+  version: "0.2.0"
+spec:
+  levels:
+    - id: observe
+      maxSeverity: 0
+    - id: soft
+      maxSeverity: 1
+    - id: hard
+      maxSeverity: 2
+    - id: block
+      maxSeverity: 3
+  bounds:
+    - id: observe
+      maxSeverity: 0
+      description: Runtime PDP may decide and report, but may not change enforcement state.
+    - id: rate_limit
+      maxSeverity: 1
+      description: Runtime may apply reversible soft restrictions such as rate limits.
+    - id: rate_limit_hard
+      maxSeverity: 2
+      description: Runtime may apply stronger reversible restrictions, excluding full deny/quarantine.
+    - id: block
+      maxSeverity: 3
+      description: Runtime may deny, quarantine or default-deny where policy permits.
+  requirements:
+    ttl: required
+    lease: required
+    audit: required
+    autoRevert: required
+  revertStrategies:
+    - restore_previous_state
+    - compare_and_restore
+  conflictPolicies:
+    - strongest_restriction_wins
+  targetScopes:
+    - source
+    - destination
+    - relationship
+    - flow
+    - identity
+    - session
+    - service
+    - cgroup
+    - node
+  invariants:
+    - runtime_actions_must_be_ttl_bounded
+    - runtime_actions_must_be_audited
+    - restrictive_actions_must_not_grant_access
+    - durable_config_changes_require_proposal_approval

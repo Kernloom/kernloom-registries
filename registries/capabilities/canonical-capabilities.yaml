@@ -1,0 +1,342 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: CapabilityRegistry
+metadata:
+  name: kernloom-canonical-capabilities
+  version: "0.2.0"
+spec:
+  categories:
+    - observe
+    - assess
+    - decide
+    - enforce
+    - export
+    - manage
+  capabilities:
+    - id: observe.network.flow
+      category: observe
+      domain: network
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.network.drop
+      category: observe
+      domain: network
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.network.rate_limit
+      category: observe
+      domain: network
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.http.request
+      category: observe
+      domain: http
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.identity.auth_event
+      category: observe
+      domain: identity
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.device.posture
+      category: observe
+      domain: device
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.asset.inventory
+      category: observe
+      domain: asset
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [config, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: assess.risk.local
+      category: assess
+      domain: risk
+      effect: assess
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: assess.risk.global
+      category: assess
+      domain: risk
+      effect: assess
+      runtimeAction: false
+      allowedPaths: [config, report]
+      reversible: false
+      safeLocalDefault: false
+    - id: decide.runtime.local
+      category: decide
+      domain: runtime
+      effect: assess
+      runtimeAction: false
+      allowedPaths: [runtime]
+      reversible: false
+      safeLocalDefault: false
+    - id: decide.runtime.vendor
+      category: decide
+      domain: runtime
+      effect: assess
+      runtimeAction: false
+      allowedPaths: [config, report]
+      reversible: false
+      safeLocalDefault: false
+    - id: enforce.access.allow
+      category: enforce
+      domain: access
+      effect: grant
+      runtimeAction: false
+      severity: 0
+      actionContract: enforce.access.allow
+      allowedPaths: [config, proposal]
+      requiresApproval: true
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.access.deny
+      category: enforce
+      domain: access
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.access.deny
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [user_identity, workload_identity, ip]
+        resource: [service_identity, application_segment, ip_port]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.access.default_deny
+      category: enforce
+      domain: access
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.access.default_deny
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [user_identity, workload_identity, ip]
+        resource: [service_identity, application_segment, ip_port]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.network.allow
+      category: enforce
+      domain: network
+      effect: grant
+      runtimeAction: false
+      severity: 0
+      actionContract: enforce.network.allow
+      allowedPaths: [config, proposal]
+      requiresApproval: true
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.network.rate_limit
+      category: enforce
+      domain: network
+      effect: restrictive
+      runtimeAction: true
+      severity: 1
+      actionContract: enforce.network.rate_limit
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: true
+    - id: enforce.network.syn_protect
+      category: enforce
+      domain: network
+      effect: restrictive
+      runtimeAction: true
+      severity: 1
+      actionContract: enforce.network.syn_protect
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple]
+        resource: [ip_port]
+      reversible: true
+      safeLocalDefault: true
+    - id: enforce.network.deny
+      category: enforce
+      domain: network
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.network.deny
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.network.default_deny
+      category: enforce
+      domain: network
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.network.default_deny
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.network.quarantine
+      category: enforce
+      domain: network
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.network.quarantine
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, workload_identity, device_identity]
+        resource: [node, service_identity, ip_port]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.traffic.rate_limit
+      category: enforce
+      domain: traffic
+      effect: restrictive
+      runtimeAction: true
+      severity: 1
+      actionContract: enforce.traffic.rate_limit
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: true
+    - id: enforce.traffic.connection_limit
+      category: enforce
+      domain: traffic
+      effect: restrictive
+      runtimeAction: true
+      severity: 1
+      actionContract: enforce.traffic.connection_limit
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: true
+    - id: enforce.traffic.bandwidth_limit
+      category: enforce
+      domain: traffic
+      effect: restrictive
+      runtimeAction: true
+      severity: 1
+      actionContract: enforce.traffic.bandwidth_limit
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: true
+    - id: enforce.traffic.tarpit
+      category: enforce
+      domain: traffic
+      effect: restrictive
+      runtimeAction: true
+      severity: 2
+      actionContract: enforce.traffic.tarpit
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple]
+        resource: [ip_port]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.traffic.drop
+      category: enforce
+      domain: traffic
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.traffic.drop
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, five_tuple, workload_identity]
+        resource: [ip_port, service_identity]
+      reversible: true
+      safeLocalDefault: false
+    - id: enforce.traffic.quarantine
+      category: enforce
+      domain: traffic
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.traffic.quarantine
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [ip, workload_identity, device_identity]
+        resource: [node, service_identity, ip_port]
+      reversible: true
+      safeLocalDefault: false
+    - id: observe.signal.emit
+      category: observe
+      domain: signal
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: observe.metric.baseline
+      category: observe
+      domain: metric
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: assess.config.asset
+      category: assess
+      domain: config
+      effect: assess
+      runtimeAction: false
+      allowedPaths: [config, report]
+      reversible: false
+      safeLocalDefault: false
+    - id: export.finding
+      category: export
+      domain: finding
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: export.receipt
+      category: export
+      domain: receipt
+      effect: observe
+      runtimeAction: false
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: manage.policy_pack.apply
+      category: manage
+      domain: runtime
+      effect: context_dependent
+      runtimeAction: false
+      allowedPaths: [runtime]
+      reversible: true
+      safeLocalDefault: false
+

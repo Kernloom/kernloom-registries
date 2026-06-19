@@ -1,0 +1,69 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: TaxonomyRegistry
+metadata:
+  name: kernloom-taxonomy
+  version: "0.2.0"
+spec:
+  entityTypes:
+    - subject
+    - device
+    - workload
+    - resource
+    - session
+    - environment
+    - network
+    - communication_edge
+    - component
+    - data
+  subjectTypes:
+    - user
+    - service_account
+    - workload
+    - device_identity
+    - automation_identity
+    - external_partner
+  resourceTypes:
+    - application
+    - application_group
+    - api
+    - service
+    - database
+    - storage
+    - secret
+    - network_segment
+    - infrastructure_asset
+  environments:
+    - development
+    - staging
+    - production
+    - dr
+  networkZones:
+    - internal
+    - dmz
+    - external
+    - vpn
+    - zero_trust_overlay
+    - unknown
+  factStatuses:
+    - known
+    - missing
+    - stale
+    - conflicting
+    - unknown
+  supportLevels:
+    - full
+    - partial
+    - conditional
+    - full_vendor_native
+    - not_supported
+  fidelityLevels:
+    - high
+    - medium
+    - low
+    - none
+  delegationStatuses:
+    - none
+    - runtime_delegated
+    - risk_delegated
+    - context_delegated
+    - enforcement_delegated

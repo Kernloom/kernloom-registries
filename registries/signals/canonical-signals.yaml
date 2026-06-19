@@ -1,0 +1,305 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: SignalRegistry
+metadata:
+  name: kernloom-canonical-signals
+  version: "0.2.0"
+spec:
+  signals:
+    - id: source.pps_high
+      domain: network
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      defaultTTL: 15m
+      derivedFromMetrics: [network.packets_per_second]
+      evidence:
+        required: [observed_value, baseline_upper_bound, observation_window, entity_scope]
+        optional: [top_destination_ports]
+      confidence:
+        minimumForAlert: low
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit, enforce.traffic.drop]
+
+    - id: source.bps_high
+      domain: network
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      defaultTTL: 15m
+      derivedFromMetrics: [network.bytes_per_second]
+      evidence:
+        required: [observed_value, baseline_upper_bound, observation_window, entity_scope]
+        optional: [top_destination_services]
+      confidence:
+        minimumForAlert: low
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit, enforce.traffic.drop]
+
+    - id: source.syn_rate_high
+      domain: network
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      defaultTTL: 15m
+      derivedFromMetrics: [network.syn_rate]
+      evidence:
+        required: [observed_value, baseline_upper_bound, observation_window, entity_scope]
+        optional: [syn_ack_ratio]
+      confidence:
+        minimumForAlert: low
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.network.syn_protect, enforce.traffic.rate_limit, enforce.traffic.drop]
+
+    - id: source.scan_suspected
+      domain: network
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site, tenant]
+      defaultTTL: 30m
+      derivedFromMetrics: [network.scan_rate]
+      evidence:
+        required: [observed_value, distinct_destination_ports, observation_window, entity_scope]
+        optional: [top_destination_ports]
+      confidence:
+        minimumForAlert: low
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit, enforce.traffic.drop]
+
+    - id: source.rate_limit_drops_sustained
+      domain: network
+      entityScopes: [src_ip]
+      visibilityScopes: [local]
+      defaultTTL: 5m
+      derivedFromMetrics: [network.rate_limit_drop_rate]
+      evidence:
+        required: [observed_value, active_enforcement, observation_window, entity_scope]
+        optional: [previous_action_id]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.drop]
+
+    - id: graph.new_edge_after_freeze
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local, site]
+      defaultTTL: 1h
+      evidence:
+        required: [source_entity, target_entity, first_seen_at, graph_freeze_version]
+        optional: [relationship_dimensions]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      requiredContext: [communication.edge.status]
+      suggestedResponses: [observe.signal.emit, enforce.traffic.rate_limit]
+
+    - id: graph.new_relationship_dim
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local, site]
+      defaultTTL: 1h
+      evidence:
+        required: [source_entity, target_entity, new_dimension, graph_version]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      suggestedResponses: [observe.signal.emit, enforce.traffic.rate_limit]
+
+    - id: graph.new_peer
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local, site]
+      defaultTTL: 1h
+      evidence:
+        required: [source_entity, target_entity, first_seen_at]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      suggestedResponses: [observe.signal.emit, enforce.traffic.rate_limit]
+
+    - id: graph.direction_change
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local, site]
+      defaultTTL: 1h
+      evidence:
+        required: [source_entity, target_entity, previous_direction, observed_direction]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      suggestedResponses: [observe.signal.emit, enforce.traffic.rate_limit]
+
+    - id: graph.metric_deviation
+      domain: graph
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local]
+      defaultTTL: 15m
+      derivedFromMetrics: [network.packets_per_second, network.bytes_per_second]
+      evidence:
+        required: [metric_id, observed_value, baseline_upper_bound, observation_window]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit]
+
+    - id: graph.time_window_deviation
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local]
+      defaultTTL: 1h
+      evidence:
+        required: [source_entity, target_entity, observed_time_window, expected_time_window]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      suggestedResponses: [observe.signal.emit]
+
+    - id: graph.edge_metric_deviation
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local]
+      defaultTTL: 15m
+      derivedFromMetrics: [network.packets_per_second, network.bytes_per_second]
+      evidence:
+        required: [source_entity, target_entity, metric_id, observed_value, baseline_upper_bound]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit]
+
+    - id: graph.edge_metric_peak_exceeds
+      domain: graph
+      entityScopes: [communication_edge]
+      visibilityScopes: [local]
+      defaultTTL: 15m
+      derivedFromMetrics: [network.packets_per_second, network.bytes_per_second]
+      evidence:
+        required: [source_entity, target_entity, metric_id, observed_value, learned_peak]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit]
+
+    - id: node.trust_degraded
+      domain: trust
+      entityScopes: [node]
+      visibilityScopes: [local, tenant]
+      defaultTTL: 15m
+      evidence:
+        required: [node_id, trust_state, observed_at]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      suggestedResponses: [observe.signal.emit]
+
+    - id: node.trust_untrusted
+      domain: trust
+      entityScopes: [node]
+      visibilityScopes: [local, tenant]
+      defaultTTL: 15m
+      evidence:
+        required: [node_id, trust_state, attestation_evidence]
+      confidence:
+        minimumForAlert: high
+        minimumForRateLimit: high
+        minimumForBlock: high
+      enforcementEligible: conditional
+      suggestedResponses: [observe.signal.emit, enforce.network.quarantine]
+
+    - id: node.trust_recovered
+      domain: trust
+      entityScopes: [node]
+      visibilityScopes: [local, tenant]
+      defaultTTL: 15m
+      evidence:
+        required: [node_id, trust_state, observed_at]
+      confidence:
+        minimumForAlert: medium
+      enforcementEligible: false
+      suggestedResponses: [observe.signal.emit]
+
+    - id: http.credential_stuffing_suspected
+      domain: http
+      entityScopes: [src_ip, subject]
+      visibilityScopes: [local, site, tenant]
+      defaultTTL: 30m
+      derivedFromMetrics: [http.auth_fail_rate, http.requests_per_second]
+      evidence:
+        required: [observed_value, failed_auth_count, observation_window, entity_scope]
+        optional: [username_count, route_group]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit, enforce.access.deny]
+
+    - id: http.path_scan_suspected
+      domain: http
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      defaultTTL: 30m
+      derivedFromMetrics: [http.path_diversity, http.status_4xx_rate]
+      evidence:
+        required: [observed_value, distinct_paths, observation_window, entity_scope]
+      confidence:
+        minimumForAlert: low
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit]
+
+    - id: http.status_5xx_source_pressure
+      domain: http
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      defaultTTL: 15m
+      derivedFromMetrics: [http.status_5xx_rate, http.requests_per_second]
+      evidence:
+        required: [observed_value, status_class, observation_window, entity_scope]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit]
+
+    - id: http.auth_fail_rate_high
+      domain: http
+      entityScopes: [src_ip, subject, service]
+      visibilityScopes: [local, site, tenant]
+      defaultTTL: 15m
+      derivedFromMetrics: [http.auth_fail_rate]
+      evidence:
+        required: [observed_value, failed_auth_count, observation_window, entity_scope]
+      confidence:
+        minimumForAlert: medium
+        minimumForRateLimit: medium
+        minimumForBlock: high
+      enforcementEligible: true
+      suggestedResponses: [enforce.traffic.rate_limit, enforce.access.deny]
+

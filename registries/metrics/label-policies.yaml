@@ -1,0 +1,68 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: LabelPolicyRegistry
+metadata:
+  name: kernloom-label-policies
+  version: "0.2.0"
+spec:
+  retentionClasses:
+    - id: ephemeral
+      defaultRetention: 1h
+    - id: operational
+      defaultRetention: 14d
+    - id: baseline
+      defaultRetention: 90d
+    - id: audit
+      defaultRetention: 1y
+  labels:
+    - id: host
+      allowed: true
+      cardinality: medium
+      piiRisk: low
+    - id: status_class
+      allowed: true
+      cardinality: low
+      piiRisk: none
+    - id: route_group
+      allowed: true
+      cardinality: medium
+      piiRisk: low
+    - id: path_template
+      allowed: true
+      cardinality: medium
+      piiRisk: medium
+      requiresNormalization: true
+    - id: service
+      allowed: true
+      cardinality: low
+      piiRisk: none
+    - id: protocol
+      allowed: true
+      cardinality: low
+      piiRisk: none
+    - id: path
+      allowed: false
+      reason: raw path has high cardinality and may contain sensitive data
+    - id: uri
+      allowed: false
+      reason: raw URI may include query strings and identifiers
+    - id: full_url
+      allowed: false
+      reason: high cardinality, may contain credentials or session tokens
+    - id: user_agent
+      allowed: false
+      reason: very high cardinality
+    - id: session_id
+      allowed: false
+      reason: sensitive and extremely high cardinality
+    - id: request_id
+      allowed: false
+      reason: unique per request, guaranteed 1:1 cardinality
+    - id: username
+      allowed: false
+      reason: sensitive PII
+    - id: authorization
+      allowed: false
+      reason: contains credentials
+    - id: cookie
+      allowed: false
+      reason: sensitive and high cardinality

@@ -1,0 +1,27 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: TrustBoundaryRegistry
+metadata:
+  name: kernloom-trust-boundaries
+  version: "0.2.0"
+spec:
+  identities:
+    - forge
+    - kliq
+    - pip_adapter
+    - pep_adapter
+    - config_adapter
+    - vendor_control_plane
+  requirements:
+    managedRuntime:
+      forgeSignsBundles: true
+      kliqVerifiesBundlesLocally: true
+      bundlePinsRegistryDigest: true
+      runtimeActionsRequirePolicyProvenance: true
+      runtimeActionsRequireReceipts: true
+      learnedStateCannotOverrideSignedPolicy: true
+    adapter:
+      mustDeclareRoles: true
+      mustDeclareCapabilities: true
+      mustNotInventEnterpriseSemantics: true
+      mustExposeHealth: true
+      mustExposeDataQualityForPIP: true

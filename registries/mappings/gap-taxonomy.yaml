@@ -1,0 +1,26 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: GapTaxonomy
+metadata:
+  name: kernloom-gap-taxonomy
+  version: "0.2.0"
+spec:
+  gapTypes:
+    - id: granularity_gap
+      severityDefault: medium
+    - id: semantic_downgrade
+      severityDefault: high
+    - id: enforcement_gap
+      severityDefault: high
+    - id: context_gap
+      severityDefault: medium
+    - id: fidelity_gap
+      severityDefault: medium
+    - id: delegation_gap
+      severityDefault: medium
+    - id: observability_gap
+      severityDefault: medium
+    - id: revert_gap
+      severityDefault: high
+    - id: audit_gap
+      severityDefault: high
+

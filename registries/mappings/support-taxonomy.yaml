@@ -1,0 +1,43 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: SupportTaxonomy
+metadata:
+  name: kernloom-support-taxonomy
+  version: "0.2.0"
+spec:
+  supportLevels:
+    - id: full
+      deployable: true
+      requiresApproval: false
+    - id: partial
+      deployable: true
+      requiresApproval: true
+    - id: conditional
+      deployable: true
+      requiresApproval: true
+    - id: full_vendor_native
+      deployable: true
+      requiresApproval: true
+    - id: not_supported
+      deployable: false
+      requiresApproval: false
+  fidelityLevels:
+    - id: high
+      description: Canonical semantics are preserved.
+    - id: medium
+      description: Usable semantic approximation; portability is reduced.
+    - id: low
+      description: Major downgrade requiring explicit operator approval.
+    - id: none
+      description: Requirement is not implemented.
+  strictnessModes:
+    - strict
+    - allow_partial_with_approval
+    - observe_only
+    - vendor_delegation_allowed
+  delegationOwners:
+    - runtime_context_owner
+    - risk_assessment_owner
+    - runtime_decision_owner
+    - enforcement_owner
+    - durable_config_owner
+

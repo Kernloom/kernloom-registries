@@ -1,0 +1,66 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: RiskTaxonomy
+metadata:
+  name: kernloom-risk-taxonomy
+  version: "0.2.0"
+spec:
+  scopes:
+    - subject
+    - device
+    - workload
+    - session
+    - resource
+    - application
+    - communication_edge
+    - network_source
+    - target_platform
+    - environment
+  levels:
+    - id: low
+      scoreRange: [0, 29]
+    - id: medium
+      scoreRange: [30, 59]
+    - id: high
+      scoreRange: [60, 79]
+    - id: critical
+      scoreRange: [80, 100]
+    - id: unknown
+      scoreRange: null
+      enforcementMeaning: insufficient_evidence
+  quality:
+    confidence:
+      type: float
+      range: [0.0, 1.0]
+      meaning: reliability of evidence and calculation
+    completeness:
+      type: float
+      range: [0.0, 1.0]
+      meaning: fraction and quality of expected inputs available
+    freshness:
+      type: duration
+      meaning: maximum accepted age of all critical inputs
+  minimumQualityByActionLevel:
+    observe:
+      confidence: 0.0
+      completeness: 0.0
+    soft:
+      confidence: 0.5
+      completeness: 0.4
+    hard:
+      confidence: 0.7
+      completeness: 0.6
+    block:
+      confidence: 0.85
+      completeness: 0.7
+  sourceTypes:
+    - id: kernloom_native
+    - id: vendor_native
+    - id: normalized_vendor
+    - id: manual_override
+    - id: inherited_context
+  invariants:
+    - risk_assessment_is_not_policy_decision
+    - vendor_risk_requires_explicit_normalization
+    - missing_and_stale_inputs_are_explicit
+    - high_impact_enforcement_requires_policy_and_bounds
+    - unknown_must_not_be_interpreted_as_low

@@ -1,0 +1,68 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: GranularityRegistry
+metadata:
+  name: kernloom-canonical-granularities
+  version: "0.2.0"
+spec:
+  semanticLevels:
+    - id: network
+      order: 10
+    - id: transport
+      order: 20
+    - id: session
+      order: 30
+    - id: identity
+      order: 40
+    - id: workload
+      order: 50
+    - id: service
+      order: 60
+    - id: application
+      order: 70
+  granularities:
+    - id: ip
+      semanticLevel: network
+      entityScope: src_ip
+      description: Single IP address. No identity semantics.
+    - id: ip_port
+      semanticLevel: transport
+      entityScope: endpoint
+      description: IP and port tuple. No user or workload identity.
+    - id: five_tuple
+      semanticLevel: transport
+      entityScope: five_tuple
+      description: Source IP, source port, destination IP, destination port and protocol.
+    - id: user_identity
+      semanticLevel: identity
+      entityScope: subject
+      description: Human or external partner identity.
+    - id: device_identity
+      semanticLevel: identity
+      entityScope: device
+      description: Managed or attested device identity.
+    - id: workload_identity
+      semanticLevel: workload
+      entityScope: workload
+      description: Workload, service account, SPIFFE ID, Kubernetes workload or equivalent.
+    - id: service_identity
+      semanticLevel: service
+      entityScope: service
+      description: Logical service identity independent of IP address.
+    - id: application_segment
+      semanticLevel: application
+      entityScope: service
+      description: Application segment or application group as represented by a vendor platform.
+    - id: node
+      semanticLevel: network
+      entityScope: node
+      description: Local runtime node or host boundary.
+  gapTypes:
+    - id: granularity_gap
+      description: Target adapter supports a weaker granularity than the policy requires.
+    - id: semantic_downgrade
+      description: Policy meaning is preserved only partially because identity or context is reduced to a lower-level representation.
+    - id: enforcement_gap
+      description: Required enforcement effect is not available on the selected adapter.
+    - id: context_gap
+      description: Required context fact is missing, stale or unsupported.
+

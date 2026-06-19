@@ -1,0 +1,218 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: MetricRegistry
+metadata:
+  name: kernloom-canonical-metrics
+  version: "0.2.0"
+spec:
+  metrics:
+    - id: network.packets_per_second
+      domain: network
+      valueType: rate
+      unit: packets/s
+      entityScopes: [src_ip, node]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [protocol]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate, max]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: network.bytes_per_second
+      domain: network
+      valueType: rate
+      unit: bytes/s
+      entityScopes: [src_ip, node]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [protocol]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate, max]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: network.syn_rate
+      domain: network
+      valueType: rate
+      unit: packets/s
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [protocol]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate, max]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: network.scan_rate
+      domain: network
+      valueType: rate
+      unit: ports/window
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: medium
+      allowedLabels: [protocol]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate, max]
+      defaultWindow: 1m
+      retentionClass: baseline
+      requiresNormalization: true
+    - id: network.rate_limit_drop_rate
+      domain: network
+      valueType: rate
+      unit: drops/s
+      entityScopes: [src_ip, node]
+      visibilityScopes: [local]
+      baselineAllowed: false
+      highCardinalityRisk: low
+      allowedLabels: [protocol]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 1m
+      retentionClass: operational
+    - id: http.requests_per_second
+      domain: http
+      valueType: rate
+      unit: requests/s
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group, status_class]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate, p95]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.auth_fail_rate
+      domain: http
+      valueType: ratio
+      unit: ratio
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group, status_class]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.status_4xx_rate
+      domain: http
+      valueType: ratio
+      unit: ratio
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group, status_class]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.status_5xx_rate
+      domain: http
+      valueType: ratio
+      unit: ratio
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group, status_class]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.path_diversity
+      domain: http
+      valueType: count
+      unit: distinct_paths/window
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: medium
+      allowedLabels: [service, route_group, path_template]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, max]
+      defaultWindow: 1m
+      retentionClass: baseline
+      requiresNormalization: true
+    - id: http.method_diversity
+      domain: http
+      valueType: count
+      unit: distinct_methods/window
+      entityScopes: [src_ip]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, max]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.request_bytes_per_second
+      domain: http
+      valueType: rate
+      unit: bytes/s
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate, p95]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.latency_p95_ms
+      domain: http
+      valueType: percentile
+      unit: ms
+      entityScopes: [service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [p95, p99]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: http.upstream_error_rate
+      domain: http
+      valueType: ratio
+      unit: ratio
+      entityScopes: [service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group, status_class]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 1m
+      retentionClass: baseline
+    - id: trust.attestation_fail_rate
+      domain: trust
+      valueType: ratio
+      unit: ratio
+      entityScopes: [node, service]
+      visibilityScopes: [local, tenant]
+      baselineAllowed: false
+      highCardinalityRisk: low
+      allowedLabels: [service]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 5m
+      retentionClass: audit
+    - id: overlay.session_failure_rate
+      domain: overlay
+      valueType: ratio
+      unit: ratio
+      entityScopes: [src_ip, service]
+      visibilityScopes: [local, site]
+      baselineAllowed: true
+      highCardinalityRisk: low
+      allowedLabels: [service, route_group]
+      forbiddenLabels: [path, uri, full_url, authorization, cookie, username, session_id]
+      aggregations: [sum, rate]
+      defaultWindow: 1m
+      retentionClass: baseline
+

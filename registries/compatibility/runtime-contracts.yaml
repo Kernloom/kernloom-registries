@@ -1,0 +1,41 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: CompatibilityRegistry
+metadata:
+  name: kernloom-runtime-compatibility
+  version: "0.2.0"
+spec:
+  contracts:
+    runtimeBundle: kernloom.io/runtime/v1alpha1
+    runtimePolicyPack: kernloom.io/runtime/v1alpha1
+    runtimeDecision: kernloom.io/runtime/v1alpha1
+    localRiskAssessment: kernloom.io/runtime/v1alpha1
+    enforcementReceipt: kernloom.io/runtime/v1alpha1
+    runtimeFinding: kernloom.io/runtime/v1alpha1
+  registrySnapshot:
+    requiredInManagedMode: true
+    requiredFields:
+      - ref.name
+      - ref.version
+      - ref.digest
+      - context_version
+      - context_keys
+      - risk_levels
+      - risk_taxonomy
+      - capabilities
+      - action_levels
+      - action_contracts
+      - signals
+      - metrics
+      - label_policies
+      - retention_classes
+      - granularities
+      - scopes
+  activation:
+    rejectUnsignedBundle: true
+    rejectExpiredBundle: true
+    rejectRollbackGeneration: true
+    rejectUnknownRuntimeAction: true
+    rejectUnknownMetric: true
+    rejectUnknownSignal: true
+    rejectForbiddenLabel: true
+    requireDryCompile: true
