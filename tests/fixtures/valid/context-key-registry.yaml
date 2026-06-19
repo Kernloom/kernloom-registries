@@ -1,0 +1,12 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: ContextKeyRegistry
+metadata:
+  name: fixture-context
+  version: "0.1.0"
+spec:
+  keys:
+    - id: subject.id
+      type: string
+      scope: subject
+      sensitivity: low
+      defaultTTL: 1h

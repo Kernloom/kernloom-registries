@@ -1,0 +1,39 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: RegistryLock
+metadata:
+  name: kernloom-standard-lock
+  version: "0.2.0"
+spec:
+  files:
+    - path: registries/actions/runtime-action-contracts.yaml
+      digest: sha256:7a56b8f7b20b952fbb6059590ccfaf8e389668657a14f2d260a5d9dafe6640bb
+    - path: registries/actions/runtime-actions.yaml
+      digest: sha256:ae0872a47820a00038efb43d9ef3ea4fe89dd09b00f266579a2d9cf225d060ad
+    - path: registries/adapters/adapter-sdk.yaml
+      digest: sha256:71abd5818ed2ec56df0bf27fa1c93cc8481b725ad5522a45f848188407427550
+    - path: registries/capabilities/canonical-capabilities.yaml
+      digest: sha256:4692a99e4d8a94d6719fd51c2c87fa2f35b9733db29a48fb02361deab42804f4
+    - path: registries/compatibility/runtime-contracts.yaml
+      digest: sha256:b41457fae86a634389cff68760c3823a44505a2f57038ec71b38646a8342b1f7
+    - path: registries/context/canonical-keys.yaml
+      digest: sha256:3bbea96a48697c0e760d385e7a9d5c21c6dbee904d30e64c9bab189f182ebb35
+    - path: registries/granularity/canonical-granularities.yaml
+      digest: sha256:bc11ea2af53343cab3773716d9c52cf3b4c67e33db610de69d36fc93a8b3ea8b
+    - path: registries/mappings/gap-taxonomy.yaml
+      digest: sha256:347125d5c68934155629f1e4d0f082a67b2ab1ed4f8a2b61444206462a6e92b4
+    - path: registries/mappings/support-taxonomy.yaml
+      digest: sha256:7ae3fc559610694ae64a90c2b11c49423ddc13ab7717e5e6624a55ba8a987849
+    - path: registries/metrics/canonical-metrics.yaml
+      digest: sha256:82e8afc771a06cfafc86c5cd536f0d0031b85aa128646bf305669d0ef5d1f290
+    - path: registries/metrics/label-policies.yaml
+      digest: sha256:48f51088715c0fec7ca9a5b9128642b36d6d35be283ddadb6a013c8b8d4e3c36
+    - path: registries/risk/risk-taxonomy.yaml
+      digest: sha256:7c5f5b0afbcd85cd72f1b7e4c33cbb5142001de79a512ad02b7dea7b897fb832
+    - path: registries/scopes/canonical-scopes.yaml
+      digest: sha256:fcd3dff1f2f8bc29e37900e66155e59559bda3dcbf4d7f8e5c8fb74c0606d7e4
+    - path: registries/security/trust-boundaries.yaml
+      digest: sha256:f1e0874fb7f47b05ed4a5bba626102f318993a26bc318e272dbe8a8444392a3b
+    - path: registries/signals/canonical-signals.yaml
+      digest: sha256:c4d622708ac97a36e2d7bd7258159255f452934e63b27fc475ac5c7ee72f7c8c
+    - path: registries/taxonomy/entities.yaml
+      digest: sha256:227edc05297bad106ec3a1616660559853da2c62d0161015b0aa205f6569460a

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/context-key-registry.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "ContextKeyRegistry" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["keys"],
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "scope"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "type": { "enum": ["string", "string_enum", "string_list", "integer", "float", "boolean"] },
+              "values": { "type": "array", "items": { "type": "string" } },
+              "scope": { "type": "string" },
+              "sensitivity": { "enum": ["low", "medium", "high"] },
+              "defaultTTL": { "type": "string" },
+              "permittedSources": { "type": "array", "items": { "type": "string" } },
+              "deprecated": { "type": "boolean" },
+              "deprecationReason": { "type": "string" },
+              "replacedBy": { "$ref": "#/$defs/id" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}
+

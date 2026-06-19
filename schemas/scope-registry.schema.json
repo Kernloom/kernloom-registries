@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/scope-registry.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "ScopeRegistry" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["entityScopes", "visibilityScopes"],
+      "properties": {
+        "entityScopes": { "type": "array", "items": { "type": "object", "required": ["id", "entityType"] } },
+        "visibilityScopes": { "type": "array", "items": { "type": "object", "required": ["id"] } }
+      }
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}
+

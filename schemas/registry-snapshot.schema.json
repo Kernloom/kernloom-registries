@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/registry-snapshot.schema.json",
+  "type": "object",
+  "required": ["ref", "context_version", "context_keys", "capabilities", "action_contracts", "signals", "metrics"],
+  "properties": {
+    "ref": {
+      "type": "object",
+      "required": ["name", "version", "digest"],
+      "properties": {
+        "name": { "const": "kernloom-standard" },
+        "version": { "type": "string" },
+        "revision": { "type": "string" },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      }
+    }
+  }
+}
+

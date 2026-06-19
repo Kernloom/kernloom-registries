@@ -1,0 +1,9 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: SignalRegistry
+metadata:
+  name: invalid-legacy-signal
+  version: "0.1.0"
+spec:
+  signals:
+    - id: signals.http.old_prefix
+      allowedScopes: [local]

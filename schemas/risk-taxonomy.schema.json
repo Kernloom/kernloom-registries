@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/risk-taxonomy.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "RiskTaxonomy" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["scopes", "levels", "quality", "minimumQualityByActionLevel"],
+      "properties": {
+        "scopes": { "type": "array", "items": { "type": "string" } },
+        "levels": { "type": "array", "items": { "type": "object", "required": ["id"] } },
+        "quality": { "type": "object" },
+        "minimumQualityByActionLevel": { "type": "object" },
+        "sourceTypes": { "type": "array", "items": { "type": "object", "required": ["id"] } }
+      }
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,34 @@
+{
+  "ref": {
+    "name": "kernloom-standard",
+    "version": "0.2.0",
+    "revision": "embedded",
+    "digest": "sha256:<computed-at-build-time>"
+  },
+  "context_version": "0.2.0",
+  "required_runtime_views": [
+    "context_keys",
+    "risk_levels",
+    "risk_taxonomy",
+    "capabilities",
+    "action_levels",
+    "action_contracts",
+    "signals",
+    "metrics",
+    "label_policies",
+    "retention_classes",
+    "granularities",
+    "scopes"
+  ],
+  "representative_ids": {
+    "context_key": "subject.risk.level",
+    "capability": "enforce.traffic.rate_limit",
+    "config_only_grant": "enforce.network.allow",
+    "signal": "http.credential_stuffing_suspected",
+    "metric": "network.packets_per_second",
+    "label_policy": "protocol",
+    "granularity": "workload_identity",
+    "entity_scope": "src_ip",
+    "visibility_scope": "local"
+  }
+}

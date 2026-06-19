@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/runtime-action-contracts.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "RuntimeActionContractRegistry" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["contracts"],
+      "properties": {
+        "contracts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "level", "effect", "monotonicity"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "level": { "enum": ["observe", "soft", "hard", "block"] },
+              "effect": { "enum": ["restrictive", "grant", "context_dependent"] },
+              "runtimeAllowed": { "type": "boolean" },
+              "canGrantAccess": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}
+
