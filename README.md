@@ -79,3 +79,13 @@ downgrade or vendor delegation.
 Managed RuntimeBundles must include a signed `registry_snapshot`. KLIQ must
 reject bundles without a snapshot and must fail closed on unknown runtime
 actions, metrics, signals, labels or context references.
+
+## Documentation
+
+- `docs/registry-reference-for-policy-intents.md`: practical table of all
+  registries, what they define and where they are used in Policy Intents,
+  TargetIntegrationProfiles, adapter mappings and runtime artifacts.
+- `docs/registry-authoring-guide.md`: authoring rules for registry entries.
+- `docs/compatibility-policy.md`: versioning and compatibility policy.
+- `docs/integration-plan.md`: consumer integration plan for Forge, KLIQ and
+  contracts.
