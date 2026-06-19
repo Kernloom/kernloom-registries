@@ -31,15 +31,15 @@ type registryDoc struct {
 type linter struct {
 	errors []string
 
-	contextKeys     map[string]bool
-	metrics         map[string]bool
-	labels          map[string]bool
-	labelsAllowed   map[string]bool
+	contextKeys      map[string]bool
+	metrics          map[string]bool
+	labels           map[string]bool
+	labelsAllowed    map[string]bool
 	retentionClasses map[string]bool
-	signals         map[string]bool
-	capabilities    map[string]capabilityInfo
-	actionLevels    map[string]bool
-	actionContracts map[string]actionContractInfo
+	signals          map[string]bool
+	capabilities     map[string]capabilityInfo
+	actionLevels     map[string]bool
+	actionContracts  map[string]actionContractInfo
 	entityScopes     map[string]bool
 	visibilityScopes map[string]bool
 	granularities    map[string]bool
@@ -162,22 +162,22 @@ func (l *linter) validateEnvelope(path string, doc registryDoc) {
 
 func (l *linter) validateExpectedKind(path, kind string) {
 	expectedBySuffix := map[string]string{
-		"registries/context/canonical-keys.yaml": "ContextKeyRegistry",
-		"registries/risk/risk-taxonomy.yaml": "RiskTaxonomy",
+		"registries/context/canonical-keys.yaml":              "ContextKeyRegistry",
+		"registries/risk/risk-taxonomy.yaml":                  "RiskTaxonomy",
 		"registries/capabilities/canonical-capabilities.yaml": "CapabilityRegistry",
-		"registries/actions/runtime-actions.yaml": "RuntimeActionRegistry",
-		"registries/actions/runtime-action-contracts.yaml": "RuntimeActionContractRegistry",
-		"registries/signals/canonical-signals.yaml": "SignalRegistry",
-		"registries/metrics/canonical-metrics.yaml": "MetricRegistry",
-		"registries/metrics/label-policies.yaml": "LabelPolicyRegistry",
-		"registries/taxonomy/entities.yaml": "TaxonomyRegistry",
+		"registries/actions/runtime-actions.yaml":             "RuntimeActionRegistry",
+		"registries/actions/runtime-action-contracts.yaml":    "RuntimeActionContractRegistry",
+		"registries/signals/canonical-signals.yaml":           "SignalRegistry",
+		"registries/metrics/canonical-metrics.yaml":           "MetricRegistry",
+		"registries/metrics/label-policies.yaml":              "LabelPolicyRegistry",
+		"registries/taxonomy/entities.yaml":                   "TaxonomyRegistry",
 		"registries/granularity/canonical-granularities.yaml": "GranularityRegistry",
-		"registries/scopes/canonical-scopes.yaml": "ScopeRegistry",
-		"registries/mappings/gap-taxonomy.yaml": "GapTaxonomy",
-		"registries/mappings/support-taxonomy.yaml": "SupportTaxonomy",
-		"registries/adapters/adapter-sdk.yaml": "AdapterSDKRegistry",
-		"registries/compatibility/runtime-contracts.yaml": "CompatibilityRegistry",
-		"registries/security/trust-boundaries.yaml": "TrustBoundaryRegistry",
+		"registries/scopes/canonical-scopes.yaml":             "ScopeRegistry",
+		"registries/mappings/gap-taxonomy.yaml":               "GapTaxonomy",
+		"registries/mappings/support-taxonomy.yaml":           "SupportTaxonomy",
+		"registries/adapters/adapter-sdk.yaml":                "AdapterSDKRegistry",
+		"registries/compatibility/runtime-contracts.yaml":     "CompatibilityRegistry",
+		"registries/security/trust-boundaries.yaml":           "TrustBoundaryRegistry",
 	}
 	clean := filepath.ToSlash(path)
 	for suffix, expected := range expectedBySuffix {

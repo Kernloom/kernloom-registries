@@ -159,9 +159,9 @@ func loadRisk(fsys fs.FS, path string) (riskRegistry, error) {
 }
 
 type riskSpec struct {
-	Scopes                      []string                         `yaml:"scopes"`
-	Levels                      []contracts.RiskLevelEntry       `yaml:"levels"`
-	Quality                     map[string]any                   `yaml:"quality"`
+	Scopes                      []string                                  `yaml:"scopes"`
+	Levels                      []contracts.RiskLevelEntry                `yaml:"levels"`
+	Quality                     map[string]any                            `yaml:"quality"`
 	MinimumQualityByActionLevel map[string]contracts.RiskQualityThreshold `yaml:"minimumQualityByActionLevel"`
 	SourceTypes                 []contracts.RiskSourceTypeEntry           `yaml:"sourceTypes"`
 }
