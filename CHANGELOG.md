@@ -2,6 +2,10 @@
 
 ## 0.2.0 - 2026-06-19
 
+- Added policy registries for policy kinds, AccessPolicy schema metadata,
+  condition types and structured operators.
+- Standardized `endpoint` as a canonical resource type and `any` as a policy
+  selector/wildcard only.
 - Added action contracts for runtime and config-path actions.
 - Split ambiguous scope semantics into entity scopes and visibility scopes.
 - Added canonical granularity, gap and support taxonomies.

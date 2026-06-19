@@ -1,0 +1,51 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: PolicyOperatorRegistry
+metadata:
+  name: kernloom-policy-operators
+  version: "0.2.0"
+spec:
+  operators:
+    - id: eq
+      celOperator: "=="
+      arity: binary
+      appliesTo: [string, string_enum, integer, float, boolean, duration]
+      description: Left value must equal right value.
+    - id: neq
+      celOperator: "!="
+      arity: binary
+      appliesTo: [string, string_enum, integer, float, boolean, duration]
+      description: Left value must not equal right value.
+    - id: gte
+      celOperator: ">="
+      arity: binary
+      appliesTo: [integer, float, duration, ordered_string_enum]
+      description: Left value must be greater than or equal to right value.
+    - id: lte
+      celOperator: "<="
+      arity: binary
+      appliesTo: [integer, float, duration, ordered_string_enum]
+      description: Left value must be less than or equal to right value.
+    - id: gt
+      celOperator: ">"
+      arity: binary
+      appliesTo: [integer, float, duration, ordered_string_enum]
+      description: Left value must be greater than right value.
+    - id: lt
+      celOperator: "<"
+      arity: binary
+      appliesTo: [integer, float, duration, ordered_string_enum]
+      description: Left value must be less than right value.
+    - id: in
+      celOperator: in
+      arity: binary
+      appliesTo: [string, string_enum, integer, string_list]
+      description: Left value must be contained in right-side list.
+    - id: not_in
+      celTemplate: "!(<signal> in <value>)"
+      arity: binary
+      appliesTo: [string, string_enum, integer, string_list]
+      description: Left value must not be contained in right-side list.
+  invariants:
+    - unknown_operator_is_invalid
+    - structured_operator_must_compile_to_equivalent_cel
+    - list_membership_requires_list_value

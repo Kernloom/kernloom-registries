@@ -27,6 +27,7 @@ spec:
     - application_group
     - api
     - service
+    - endpoint
     - database
     - storage
     - secret

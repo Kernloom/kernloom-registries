@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/access-policy.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/v1" },
+    "kind": { "const": "AccessPolicy" },
+    "metadata": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string" },
+        "environment": { "enum": ["development", "staging", "production", "dr"] },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["subject", "action", "resource", "effect"],
+      "additionalProperties": false,
+      "properties": {
+        "subject": { "$ref": "#/$defs/subjectSelector" },
+        "action": { "enum": ["access"] },
+        "resource": { "$ref": "#/$defs/resourceSelector" },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/condition" }
+        },
+        "effect": { "enum": ["allow", "deny"] },
+        "enforcementConstraints": { "$ref": "#/$defs/enforcementConstraints" }
+      }
+    }
+  },
+  "$defs": {
+    "subjectSelector": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "any",
+            "role",
+            "group",
+            "user",
+            "service_account",
+            "workload",
+            "device_identity",
+            "automation_identity",
+            "external_partner"
+          ]
+        },
+        "ref": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "any" } } },
+          "then": {},
+          "else": { "required": ["ref"] }
+        }
+      ]
+    },
+    "resourceSelector": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "any",
+            "application",
+            "application_group",
+            "api",
+            "service",
+            "endpoint",
+            "database",
+            "storage",
+            "secret",
+            "network_segment",
+            "infrastructure_asset"
+          ]
+        },
+        "ref": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "any" } } },
+          "then": {},
+          "else": { "required": ["ref"] }
+        }
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": {
+          "enum": [
+            "authentication_strength",
+            "risk_level",
+            "device_posture",
+            "network_tuple",
+            "session_context",
+            "custom"
+          ]
+        },
+        "signal": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
+        },
+        "operator": { "enum": ["eq", "neq", "gte", "lte", "gt", "lt", "in", "not_in"] },
+        "value": {},
+        "cel": { "type": "string", "minLength": 1 }
+      },
+      "anyOf": [
+        { "required": ["cel"] },
+        { "required": ["signal", "operator"] }
+      ]
+    },
+    "enforcementConstraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowDelegation": { "type": "boolean" },
+        "allowSemanticDowngrade": { "type": "boolean" },
+        "minimumFidelity": { "enum": ["high", "medium", "low", "none"] },
+        "allowedDelegationOwners": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "allowedRuntimeActions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "requireApprovalFor": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: PolicyConditionTypeRegistry
+metadata:
+  name: kernloom-policy-condition-types
+  version: "0.2.0"
+spec:
+  conditionTypes:
+    - id: authentication_strength
+      requirementKind: auth_strength
+      aliases: [auth_strength, mfa]
+      allowedSignals:
+        - session.authentication.strength
+        - subject.identity_assurance
+      allowedOperators: [eq, neq, gte, lte, in, not_in]
+      description: Authentication assurance, MFA or identity assurance condition.
+    - id: risk_level
+      requirementKind: risk_level
+      aliases: [risk]
+      allowedSignals:
+        - subject.risk.level
+        - device.risk.level
+        - session.risk.level
+      allowedOperators: [eq, neq, gte, lte, in, not_in]
+      valueRegistry: registries/risk/risk-taxonomy.yaml
+      description: Canonical risk level condition. Unknown risk is insufficient evidence, not low risk.
+    - id: device_posture
+      requirementKind: device_posture
+      aliases: [device_compliance]
+      allowedSignals:
+        - device.posture.status
+        - device.edr.status
+        - device.attestation.status
+        - workload.attestation.status
+      allowedOperators: [eq, neq, in, not_in]
+      description: Device, endpoint or workload posture condition.
+    - id: network_tuple
+      requirementKind: network_tuple
+      aliases: [ip_range, port, protocol]
+      allowedSignals:
+        - network.source
+        - network.destination
+        - network.protocol
+        - network.port
+        - network.zone
+      allowedOperators: [eq, neq, in, not_in]
+      description: Source, destination, protocol, port or zone condition for network-level targets.
+    - id: session_context
+      requirementKind: session_context
+      aliases: [session_location]
+      allowedSignals:
+        - session.location
+        - session.network_zone
+      allowedOperators: [eq, neq, in, not_in]
+      description: Session-scoped context condition.
+    - id: custom
+      requirementKind: custom
+      allowedOperators: [eq, neq, gte, lte, gt, lt, in, not_in]
+      description: Explicit escape hatch for non-standard conditions; must be mapped by an adapter or rejected.
+  invariants:
+    - condition_type_classifies_policy_requirement
+    - condition_signal_must_be_a_context_key_or_valid_cel_expression
+    - custom_condition_requires_explicit_mapping

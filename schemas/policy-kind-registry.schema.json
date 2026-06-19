@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/policy-kind-registry.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "PolicyKindRegistry" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["apiVersions", "policyKinds"],
+      "properties": {
+        "apiVersions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["value", "status"],
+            "properties": {
+              "value": { "type": "string" },
+              "status": { "enum": ["stable", "planned", "deprecated"] },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "policyKinds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "wireKind", "status"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "wireKind": { "type": "string" },
+              "status": { "enum": ["stable", "planned", "deprecated"] },
+              "schema": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}

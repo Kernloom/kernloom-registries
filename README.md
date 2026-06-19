@@ -12,8 +12,9 @@ and not the wire-contract module.
 RuntimePolicyPack, RuntimeDecision, LocalRiskAssessment and receipts.
 
 `kernloom-registries` defines the standard vocabulary those schemas may refer
-to: context keys, capabilities, actions, signals, metrics, labels, entity kinds,
-environment names, confidence bands and risk levels.
+to: policy kinds, policy condition types, operators, context keys,
+capabilities, actions, signals, metrics, labels, entity kinds, environment
+names, confidence bands and risk levels.
 
 Forge consumes this repository at compile time and pins a registry version or
 digest into generated artifacts. KLIQ consumes the pinned registry snapshot at
@@ -23,6 +24,14 @@ mode.
 ## Registries
 
 - `registries/context/canonical-keys.yaml`: canonical context facts.
+- `registries/policy/policy-kinds.yaml`: supported policy document kinds and
+  shared envelope rules.
+- `registries/policy/access-policy-schema.yaml`: AccessPolicy selectors,
+  actions, effects, constraints and schema link.
+- `registries/policy/condition-types.yaml`: canonical AccessPolicy condition
+  types and their allowed context keys.
+- `registries/policy/operators.yaml`: structured condition operators and their
+  CEL meaning.
 - `registries/risk/risk-taxonomy.yaml`: risk levels, score ranges and quality
   semantics.
 - `registries/capabilities/canonical-capabilities.yaml`: canonical capability
@@ -62,8 +71,9 @@ go run ./cmd/kernloom-registry-lint ./registries
 ```
 
 The linter checks registry envelopes, duplicate IDs, ID naming, deprecated
-metadata, runtime action contracts, scope references, metric labels, signal
-evidence references and forbidden legacy fields such as `allowedScopes`.
+metadata, policy schema references, runtime action contracts, scope references,
+metric labels, signal evidence references and forbidden legacy fields such as
+`allowedScopes`.
 
 Release archives must exclude `.git/`. Local development may use `go.work` or
 consumer-module `replace` directives; the released `kernloom-registries/go.mod`
@@ -75,6 +85,12 @@ Adapters may extend capabilities, signals or vendor assessments under their own
 namespace, but enterprise policy intent and managed RuntimePolicyPacks must use
 canonical registry IDs unless an explicit, versioned mapping declares a
 downgrade or vendor delegation.
+
+Policy authoring tools may offer a more natural policy language, but that
+language must compile into the canonical policy kinds and values defined here.
+For AccessPolicy, `any` is a policy selector/wildcard, not a canonical
+`subject.type` or `resource.type` context value. `endpoint` is a canonical
+resource type for host, IP or IP:port resources.
 
 Managed RuntimeBundles must include a signed `registry_snapshot`. KLIQ must
 reject bundles without a snapshot and must fail closed on unknown runtime

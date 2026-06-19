@@ -43,6 +43,11 @@ type linter struct {
 	entityScopes     map[string]bool
 	visibilityScopes map[string]bool
 	granularities    map[string]bool
+	subjectTypes     map[string]bool
+	resourceTypes    map[string]bool
+	policyKinds      map[string]bool
+	conditionTypes   map[string]bool
+	policyOperators  map[string]bool
 }
 
 type capabilityInfo struct {
@@ -81,6 +86,11 @@ func main() {
 		entityScopes:     map[string]bool{},
 		visibilityScopes: map[string]bool{},
 		granularities:    map[string]bool{},
+		subjectTypes:     map[string]bool{},
+		resourceTypes:    map[string]bool{},
+		policyKinds:      map[string]bool{},
+		conditionTypes:   map[string]bool{},
+		policyOperators:  map[string]bool{},
 	}
 	if err := l.run(root); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -178,6 +188,10 @@ func (l *linter) validateExpectedKind(path, kind string) {
 		"registries/adapters/adapter-sdk.yaml":                "AdapterSDKRegistry",
 		"registries/compatibility/runtime-contracts.yaml":     "CompatibilityRegistry",
 		"registries/security/trust-boundaries.yaml":           "TrustBoundaryRegistry",
+		"registries/policy/policy-kinds.yaml":                 "PolicyKindRegistry",
+		"registries/policy/operators.yaml":                    "PolicyOperatorRegistry",
+		"registries/policy/condition-types.yaml":              "PolicyConditionTypeRegistry",
+		"registries/policy/access-policy-schema.yaml":         "PolicySchemaRegistry",
 	}
 	clean := filepath.ToSlash(path)
 	for suffix, expected := range expectedBySuffix {
@@ -285,6 +299,40 @@ func (l *linter) index(d loadedDoc) {
 			id := stringField(item, "id")
 			l.checkID(d.path, id)
 			l.addUnique(d.path, l.granularities, id, "granularity")
+		}
+	case "TaxonomyRegistry":
+		for _, id := range stringList(d.doc.Spec["subjectTypes"]) {
+			l.checkID(d.path, id)
+			l.addUnique(d.path, l.subjectTypes, id, "subject type")
+		}
+		for _, id := range stringList(d.doc.Spec["resourceTypes"]) {
+			l.checkID(d.path, id)
+			l.addUnique(d.path, l.resourceTypes, id, "resource type")
+		}
+	case "PolicyKindRegistry":
+		for _, item := range list(d.doc.Spec["policyKinds"]) {
+			id := stringField(item, "id")
+			l.checkID(d.path, id)
+			l.addUnique(d.path, l.policyKinds, id, "policy kind")
+			if stringField(item, "wireKind") == "" {
+				l.err(d.path, "policy kind %q must declare wireKind", id)
+			}
+		}
+	case "PolicyOperatorRegistry":
+		for _, item := range list(d.doc.Spec["operators"]) {
+			id := stringField(item, "id")
+			l.checkID(d.path, id)
+			l.addUnique(d.path, l.policyOperators, id, "policy operator")
+		}
+	case "PolicyConditionTypeRegistry":
+		for _, item := range list(d.doc.Spec["conditionTypes"]) {
+			id := stringField(item, "id")
+			l.checkID(d.path, id)
+			l.validateDeprecated(d.path, item, id)
+			l.addUnique(d.path, l.conditionTypes, id, "condition type")
+			for _, alias := range stringList(item["aliases"]) {
+				l.checkID(d.path, alias)
+			}
 		}
 	}
 }
@@ -408,6 +456,65 @@ func (l *linter) validateCrossRefs(d loadedDoc) {
 			for _, ctx := range stringList(item["requiredContext"]) {
 				if !l.contextKeys[ctx] {
 					l.err(d.path, "signal %q references unknown context key %q", id, ctx)
+				}
+			}
+		}
+	case "PolicyConditionTypeRegistry":
+		for _, item := range list(d.doc.Spec["conditionTypes"]) {
+			id := stringField(item, "id")
+			for _, signal := range stringList(item["allowedSignals"]) {
+				if !l.contextKeys[signal] {
+					l.err(d.path, "condition type %q references unknown context key %q", id, signal)
+				}
+			}
+			for _, operator := range stringList(item["allowedOperators"]) {
+				if !l.policyOperators[operator] {
+					l.err(d.path, "condition type %q references unknown operator %q", id, operator)
+				}
+			}
+		}
+	case "PolicySchemaRegistry":
+		for _, schema := range list(d.doc.Spec["schemas"]) {
+			id := stringField(schema, "id")
+			l.checkID(d.path, id)
+			for _, action := range list(schema["actions"]) {
+				l.checkID(d.path, stringField(action, "id"))
+			}
+			for _, effect := range list(schema["effects"]) {
+				l.checkID(d.path, stringField(effect, "id"))
+			}
+			for _, conditionType := range stringList(schema["conditionTypes"]) {
+				if !l.conditionTypes[conditionType] {
+					l.err(d.path, "policy schema %q references unknown condition type %q", id, conditionType)
+				}
+			}
+			for _, operator := range stringList(schema["operators"]) {
+				if !l.policyOperators[operator] {
+					l.err(d.path, "policy schema %q references unknown operator %q", id, operator)
+				}
+			}
+			for _, selector := range list(schema["subjectSelectorTypes"]) {
+				selectorID := stringField(selector, "id")
+				l.checkID(d.path, selectorID)
+				contextKey := stringField(selector, "contextKey")
+				if contextKey != "" && !l.contextKeys[contextKey] {
+					l.err(d.path, "subject selector %q references unknown context key %q", selectorID, contextKey)
+				}
+				canonical := stringField(selector, "canonicalSubjectType")
+				if canonical != "" && !l.subjectTypes[canonical] {
+					l.err(d.path, "subject selector %q references unknown canonicalSubjectType %q", selectorID, canonical)
+				}
+			}
+			for _, selector := range list(schema["resourceSelectorTypes"]) {
+				selectorID := stringField(selector, "id")
+				l.checkID(d.path, selectorID)
+				contextKey := stringField(selector, "contextKey")
+				if contextKey != "" && !l.contextKeys[contextKey] {
+					l.err(d.path, "resource selector %q references unknown context key %q", selectorID, contextKey)
+				}
+				canonical := stringField(selector, "canonicalResourceType")
+				if canonical != "" && !l.resourceTypes[canonical] {
+					l.err(d.path, "resource selector %q references unknown canonicalResourceType %q", selectorID, canonical)
 				}
 			}
 		}

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/policy-schema-registry.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "PolicySchemaRegistry" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["schemas"],
+      "properties": {
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "apiVersion", "wireKind", "jsonSchema", "status"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "apiVersion": { "type": "string" },
+              "wireKind": { "type": "string" },
+              "jsonSchema": { "type": "string" },
+              "status": { "enum": ["stable", "planned", "deprecated"] },
+              "description": { "type": "string" },
+              "actions": { "$ref": "#/$defs/idListObjects" },
+              "effects": { "$ref": "#/$defs/idListObjects" },
+              "subjectSelectorTypes": { "type": "array", "items": { "$ref": "#/$defs/selector" } },
+              "resourceSelectorTypes": { "type": "array", "items": { "$ref": "#/$defs/selector" } },
+              "conditionTypes": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+              "operators": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+    "idListObjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    },
+    "selector": {
+      "type": "object",
+      "required": ["id", "selectorClass"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "selectorClass": { "type": "string" },
+        "contextKey": { "$ref": "#/$defs/id" },
+        "canonicalSubjectType": { "$ref": "#/$defs/id" },
+        "canonicalResourceType": { "$ref": "#/$defs/id" },
+        "requiresRef": { "type": "boolean" },
+        "description": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,149 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: PolicySchemaRegistry
+metadata:
+  name: kernloom-access-policy-schema
+  version: "0.2.0"
+spec:
+  schemas:
+    - id: access_policy
+      apiVersion: kernloom.io/v1
+      wireKind: AccessPolicy
+      jsonSchema: schemas/access-policy.schema.json
+      status: stable
+      description: Vendor-neutral access intent compiled by Forge into target plans and runtime policy packs.
+      actions:
+        - id: access
+          description: Request access from a subject selector to a resource selector.
+      effects:
+        - id: allow
+          description: Permit the action when subject, resource and conditions match.
+        - id: deny
+          description: Deny the action when subject, resource and conditions match.
+      subjectSelectorTypes:
+        - id: any
+          selectorClass: wildcard
+          requiresRef: false
+          description: Matches every subject. This is a policy selector, not a canonical subject.type value.
+        - id: role
+          selectorClass: attribute_selector
+          contextKey: subject.role
+          requiresRef: true
+          description: Selects subjects by role context.
+        - id: group
+          selectorClass: attribute_selector
+          contextKey: subject.group
+          requiresRef: true
+          description: Selects subjects by group context.
+        - id: user
+          selectorClass: canonical_subject
+          canonicalSubjectType: user
+          requiresRef: true
+          description: Selects one human user subject.
+        - id: service_account
+          selectorClass: canonical_subject
+          canonicalSubjectType: service_account
+          requiresRef: true
+          description: Selects one service account subject.
+        - id: workload
+          selectorClass: canonical_subject
+          canonicalSubjectType: workload
+          requiresRef: true
+          description: Selects one workload subject.
+        - id: device_identity
+          selectorClass: canonical_subject
+          canonicalSubjectType: device_identity
+          requiresRef: true
+          description: Selects one device identity subject.
+        - id: automation_identity
+          selectorClass: canonical_subject
+          canonicalSubjectType: automation_identity
+          requiresRef: true
+          description: Selects one automation identity subject.
+        - id: external_partner
+          selectorClass: canonical_subject
+          canonicalSubjectType: external_partner
+          requiresRef: true
+          description: Selects one external partner subject.
+      resourceSelectorTypes:
+        - id: any
+          selectorClass: wildcard
+          requiresRef: false
+          description: Matches every resource. This is a policy selector, not a canonical resource.type value.
+        - id: application
+          selectorClass: canonical_resource
+          canonicalResourceType: application
+          requiresRef: true
+          description: Selects one application resource.
+        - id: application_group
+          selectorClass: canonical_resource
+          canonicalResourceType: application_group
+          requiresRef: true
+          description: Selects an application group resource.
+        - id: api
+          selectorClass: canonical_resource
+          canonicalResourceType: api
+          requiresRef: true
+          description: Selects an API resource.
+        - id: service
+          selectorClass: canonical_resource
+          canonicalResourceType: service
+          requiresRef: true
+          description: Selects a service resource.
+        - id: endpoint
+          selectorClass: canonical_resource
+          canonicalResourceType: endpoint
+          requiresRef: true
+          description: Selects an IP, host or IP:port endpoint resource.
+        - id: database
+          selectorClass: canonical_resource
+          canonicalResourceType: database
+          requiresRef: true
+          description: Selects a database resource.
+        - id: storage
+          selectorClass: canonical_resource
+          canonicalResourceType: storage
+          requiresRef: true
+          description: Selects a storage resource.
+        - id: secret
+          selectorClass: canonical_resource
+          canonicalResourceType: secret
+          requiresRef: true
+          description: Selects a secret resource.
+        - id: network_segment
+          selectorClass: canonical_resource
+          canonicalResourceType: network_segment
+          requiresRef: true
+          description: Selects a network segment resource.
+        - id: infrastructure_asset
+          selectorClass: canonical_resource
+          canonicalResourceType: infrastructure_asset
+          requiresRef: true
+          description: Selects an infrastructure asset resource.
+      conditionTypes:
+        - authentication_strength
+        - risk_level
+        - device_posture
+        - network_tuple
+        - session_context
+        - custom
+      operators:
+        - eq
+        - neq
+        - gte
+        - lte
+        - gt
+        - lt
+        - in
+        - not_in
+      enforcementConstraintFields:
+        - allowDelegation
+        - allowSemanticDowngrade
+        - minimumFidelity
+        - allowedDelegationOwners
+        - allowedRuntimeActions
+        - requireApprovalFor
+      invariants:
+        - any_is_selector_not_entity_type
+        - endpoint_is_canonical_resource_type
+        - conditions_are_conjunctive_by_default
+        - deny_or_default_deny_must_be_explicit_when_required

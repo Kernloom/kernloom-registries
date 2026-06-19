@@ -12,6 +12,10 @@
 
 Add a Forge registry loader package that reads this repo layout and produces:
 
+- policy kind registry;
+- AccessPolicy schema metadata;
+- policy condition type registry;
+- policy operator registry;
 - context key registry;
 - metric registry;
 - signal registry;
@@ -23,6 +27,10 @@ Add a Forge registry loader package that reads this repo layout and produces:
 
 Forge compiler checks:
 
+- policy kind and apiVersion are supported;
+- subject/resource selectors are valid policy selectors;
+- `any` is handled as wildcard selector, not as a canonical entity type;
+- condition types and structured operators are known;
 - policy condition keys exist;
 - enum values are valid;
 - required capabilities are canonical or explicitly mapped;

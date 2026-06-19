@@ -19,6 +19,19 @@ Registry entries are normative Kernloom semantics. Treat IDs as public API.
 - Every runtime capability must reference a runtime action contract with the
   same ID.
 
+## Policy Schemas
+
+- Policy kinds belong in `registries/policy/policy-kinds.yaml`; do not infer
+  valid kinds from Forge code only.
+- Condition types belong in `registries/policy/condition-types.yaml` and must
+  reference known context keys when they declare `allowedSignals`.
+- Structured operators belong in `registries/policy/operators.yaml` and must
+  have a clear CEL meaning.
+- `any` is a policy selector/wildcard only. Do not add it to canonical
+  `subjectTypes`, `resourceTypes`, or context key value sets.
+- Add endpoint-like resources as canonical resource types only when they are
+  stable policy targets, not just temporary network tuples.
+
 ## Scopes
 
 - Use `entityScopes` for the thing the metric or signal is about.

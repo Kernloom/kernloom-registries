@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kernloom.io/schemas/policy-condition-type-registry.schema.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "kernloom.io/registry/v1alpha1" },
+    "kind": { "const": "PolicyConditionTypeRegistry" },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "required": ["conditionTypes"],
+      "properties": {
+        "conditionTypes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "requirementKind"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "requirementKind": { "$ref": "#/$defs/id" },
+              "aliases": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+              "allowedSignals": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+              "allowedOperators": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+              "valueRegistry": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      }
+    }
+  }
+}

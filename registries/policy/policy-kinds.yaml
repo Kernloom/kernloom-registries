@@ -1,0 +1,51 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: PolicyKindRegistry
+metadata:
+  name: kernloom-policy-kinds
+  version: "0.2.0"
+spec:
+  apiVersions:
+    - value: kernloom.io/v1
+      status: stable
+      description: Stable policy intent API version for vendor-neutral enterprise intent.
+  policyKinds:
+    - id: access_policy
+      wireKind: AccessPolicy
+      status: stable
+      schema: schemas/access-policy.schema.json
+      description: Subject-to-resource access intent with conditions, effect and enforcement constraints.
+    - id: network_policy
+      wireKind: NetworkPolicy
+      status: planned
+      description: Planned traffic relationship policy for services, segments and network edges.
+    - id: admission_policy
+      wireKind: AdmissionPolicy
+      status: planned
+      description: Planned workload and container admission intent.
+    - id: data_policy
+      wireKind: DataPolicy
+      status: planned
+      description: Planned data access, processing and classification intent.
+    - id: posture_policy
+      wireKind: PosturePolicy
+      status: planned
+      description: Planned device, workload and endpoint posture expectation intent.
+    - id: change_policy
+      wireKind: ChangePolicy
+      status: planned
+      description: Planned configuration and change authorization intent.
+  sharedEnvelope:
+    requiredFields:
+      - apiVersion
+      - kind
+      - metadata.name
+      - spec
+    metadataFields:
+      - name
+      - owner
+      - environment
+      - labels
+  invariants:
+    - policy_intent_is_vendor_neutral
+    - policy_kind_selects_spec_schema
+    - policy_language_may_compile_to_policy_yaml_but_must_not_change_semantics

@@ -102,7 +102,7 @@ spec:
       defaultTTL: 24h
     - id: resource.type
       type: string_enum
-      values: [application, application_group, api, service, database, storage, secret, network_segment, infrastructure_asset]
+      values: [application, application_group, api, service, endpoint, database, storage, secret, network_segment, infrastructure_asset]
       scope: resource
       sensitivity: low
       defaultTTL: 24h

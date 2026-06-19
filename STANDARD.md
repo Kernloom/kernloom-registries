@@ -12,6 +12,7 @@ vendor sub-control-planes, PIPs and risk engines:
 
 - entity taxonomy: subject, device, workload, resource, session, environment,
   network and communication edge;
+- policy kinds, condition types, operators, selectors and effects;
 - canonical context keys and their value sets;
 - signal IDs and evidence semantics;
 - metric IDs, units, scopes and label policy;
@@ -38,8 +39,9 @@ Forge:
 
 1. Load this repository as a versioned dependency, Git submodule, release
    artifact or OCI artifact.
-2. Validate all policy intent keys, required signals, capabilities, actions,
-   risk references and metric IDs against these registries.
+2. Validate policy kind, selectors, condition types, operators, required
+   signals, capabilities, actions, risk references and metric IDs against these
+   registries.
 3. Validate adapter manifests and requirement mappings against canonical IDs.
 4. Emit coverage, downgrade and delegation reports using the standard support
    and fidelity vocabulary.
@@ -90,6 +92,8 @@ registry:
 - `unknown` risk is insufficient evidence, not low risk.
 - Unknown labels are forbidden in managed mode.
 - Unknown context keys in RuntimePolicyPack conditions are rejected.
+- `any` is a policy selector/wildcard, not a canonical entity type.
+- `endpoint` is a canonical resource type for endpoint-shaped resources.
 
 ## Release Hygiene
 
