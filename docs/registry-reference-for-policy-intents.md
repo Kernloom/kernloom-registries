@@ -204,6 +204,8 @@ Example target questions:
 - Adapters may extend vendor semantics, but must map them to canonical
   registries or declare delegation/downgrade.
 - `unknown` is a real state, not "low risk" and not "healthy".
+- Missing or unknown context must be reported as missing evidence or a context
+  gap. It must not silently become a hard runtime block.
 - Grant actions such as Allow/Network Allow belong in config/proposal paths,
   not in local runtime enforcement packs.
 - Managed `RuntimeBundle`s must include a `registry_snapshot`. KLIQ must reject
