@@ -9,6 +9,17 @@ intent. Adapter manifests and mappings describe what the target can really do.
 Forge connects these layers and creates reports, `RuntimePolicyPack`s, or
 signed `RuntimeBundle`s.
 
+## Quick Rules
+
+- Use `require` for access conditions such as low risk, MFA or healthy device.
+- Use `when ... then ...` for response behavior after something is observed.
+- `AccessPolicy` is the canonical policy intent format.
+- Natural intent must compile to canonical YAML before Forge plans or bundles.
+- KLIQ loads `RuntimePolicyPack` or signed `RuntimeBundle`, not natural intent
+  text.
+- Missing or unknown context must be reported; it must not silently become a
+  block.
+
 ## Layers
 
 | Layer | Artifact | Uses Registries For |

@@ -1,5 +1,15 @@
 # Integration Plan
 
+## v0.3.0 Status
+
+- Forge loads `kernloom-registries` as the source of canonical policy/runtime
+  vocabulary.
+- Forge can include a registry snapshot in signed RuntimeBundles.
+- KLIQ consumes registry snapshots on the managed runtime path.
+- Source baselines, RuntimePDP facts and RuntimePolicyPacks still need a fuller
+  runtime fact/context registry.
+- Local development may use workspace replaces. Release modules must not.
+
 ## Phase 1: Move Defaults Into Registries
 
 - Move Forge `registries/context/canonical-keys.yaml` into this repo.

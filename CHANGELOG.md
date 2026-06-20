@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 - 2026-06-20
+
+- Documented the registry snapshot path for Forge-managed KLIQ nodes.
+- Clarified how natural policy intent maps to canonical `AccessPolicy` fields.
+- Clarified that response rules and guardrails are separate from
+  `AccessPolicy` and still need compiler support.
+- Kept `any` as a selector/wildcard, not an entity type.
+- Kept `endpoint` as a canonical resource type.
+- Updated release docs for the current RuntimePDP and policy-pack workflow.
+
 ## 0.2.0 - 2026-06-19
 
 - Added policy registries for policy kinds, AccessPolicy schema metadata,

@@ -77,7 +77,7 @@ Runtime artifacts must pin:
 ```yaml
 registry:
   name: kernloom-standard
-  version: 0.2.0
+  version: 0.3.0
   revision: <git-sha-or-release>
   digest: sha256:<digest>
 ```

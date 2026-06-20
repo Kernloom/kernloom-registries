@@ -6,6 +6,17 @@ It defines the vendor-neutral names, values and semantics that Forge may compile
 and KLIQ may execute. It is not a policy repository, not an adapter repository
 and not the wire-contract module.
 
+## Current Release Line
+
+`v0.3.0` supports the current Forge/KLIQ runtime path:
+
+- `AccessPolicy` policy vocabulary.
+- Structured condition types and operators.
+- Canonical context keys for risk, device, session and network facts.
+- Runtime action contracts for TTL-bounded local actions.
+- Metrics, signals, scopes, labels and risk levels used by KLIQ.
+- Registry snapshots embedded in managed RuntimeBundles.
+
 ## Boundary
 
 `kernloom-contracts` defines shared wire schemas: RuntimeBundle,
