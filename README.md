@@ -11,6 +11,8 @@ and not the wire-contract module.
 `v0.3.0` supports the current Forge/KLIQ runtime path:
 
 - `AccessPolicy` policy vocabulary.
+- Runtime IR document kinds such as `GuardrailPolicy`, `DetectionPolicy`,
+  `ResponsePolicy`, and `AlertRoute`.
 - Structured condition types and operators.
 - Canonical context keys for risk, device, session and network facts.
 - Runtime action contracts for TTL-bounded local actions.

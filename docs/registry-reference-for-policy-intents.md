@@ -34,7 +34,7 @@ signed `RuntimeBundle`s.
 
 | Registry | File | Defines | Use In Policy Intent / Target |
 |---|---|---|---|
-| Policy Kinds | `registries/policy/policy-kinds.yaml` | Supported policy document kinds such as `AccessPolicy`, shared envelope fields, status, and schema links. | `apiVersion: kernloom.io/v1` and `kind: AccessPolicy` come from this layer. Natural policy languages must compile to these canonical kinds. |
+| Policy Kinds | `registries/policy/policy-kinds.yaml` | Supported policy document kinds such as `AccessPolicy`, `GuardrailPolicy`, `DetectionPolicy`, `ResponsePolicy`, and `AlertRoute`, plus shared envelope fields, status, and schema links. | `apiVersion: kernloom.io/v1` and `kind: AccessPolicy` come from this layer. Natural policy languages must compile to these canonical kinds. |
 | AccessPolicy Schema | `registries/policy/access-policy-schema.yaml` and `schemas/access-policy.schema.json` | AccessPolicy selectors, `action: access`, effects `allow` and `deny`, enforcement constraint fields, and the decision that `any` is a selector/wildcard. | Validates the shape of an `AccessPolicy`. `subject.type: any` means wildcard selector; it is not a canonical `subject.type` context value. |
 | Condition Types | `registries/policy/condition-types.yaml` | Condition classes such as `authentication_strength`, `risk_level`, `device_posture`, `network_tuple`, `session_context`, and their allowed context keys. | Directly in `AccessPolicy.spec.conditions[].type`. Example: `type: network_tuple` may use `network.source`, `network.destination`, `network.protocol`, or `network.port`. |
 | Operators | `registries/policy/operators.yaml` | Structured operators `eq`, `neq`, `gte`, `lte`, `gt`, `lt`, `in`, `not_in` and their CEL meaning. | Directly in `AccessPolicy.spec.conditions[].operator`. Forge converts structured conditions into equivalent CEL when needed. |
@@ -142,13 +142,17 @@ The compiler should split this into canonical artifacts:
   are conjunctive by default: all must hold for the allow intent.
 - `default deny` becomes target policy default behavior or a runtime pack
   `default_effect`, depending on target support.
-- each `when ... then ...` becomes one runtime response rule or report action.
+- `when ... exceeds ... within ...` may become a `DetectionPolicy`.
+- `then alert ...`, `then rate_limit ...`, and similar reactions may become a
+  `ResponsePolicy`.
+- alert routing details belong in an `AlertRoute`.
 - `never` and `max action` become safety guardrails or enforcement constraints.
 
-Multiple `when ... then ...` statements are allowed. Response rules should be
-compiled into `RuntimePolicyPack.spec.response_rules[]`. If one natural rule
-names several actions, Forge should expand it into several response rules with
-the same trigger, unless a future ordered action group contract is added.
+Multiple `when ... then ...` statements are allowed. Detections should compile
+into `RuntimePolicyPack.spec.detection_rules[]`. Response rules should compile
+into `RuntimePolicyPack.spec.response_rules[]`. If one natural rule names
+several actions, Forge should expand it into several response rules with the
+same detection ID, unless a future ordered action group contract is added.
 
 Do not use `when ... then ...` for access requirements such as low risk or MFA.
 Use `require` for access conditions and `when ... then ...` for response

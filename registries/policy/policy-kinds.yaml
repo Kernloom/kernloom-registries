@@ -14,6 +14,22 @@ spec:
       status: stable
       schema: schemas/access-policy.schema.json
       description: Subject-to-resource access intent with conditions, effect and enforcement constraints.
+    - id: guardrail_policy
+      wireKind: GuardrailPolicy
+      status: experimental
+      description: Runtime safety invariants such as never auto-blocking protected subjects.
+    - id: detection_policy
+      wireKind: DetectionPolicy
+      status: experimental
+      description: Stateful runtime detections such as denied-access thresholds and sustained drops.
+    - id: response_policy
+      wireKind: ResponsePolicy
+      status: experimental
+      description: Bounded runtime reactions linked to detection IDs or direct observed conditions.
+    - id: alert_route
+      wireKind: AlertRoute
+      status: experimental
+      description: Notification route, dedupe and escalation target for alert responses.
     - id: network_policy
       wireKind: NetworkPolicy
       status: planned
