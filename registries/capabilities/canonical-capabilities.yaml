@@ -10,6 +10,7 @@ spec:
     - decide
     - enforce
     - export
+    - notify
     - manage
   capabilities:
     - id: observe.network.flow
@@ -299,6 +300,27 @@ spec:
       allowedPaths: [runtime, report]
       reversible: false
       safeLocalDefault: true
+    - id: notify.alert.emit
+      category: notify
+      domain: alert
+      effect: notify
+      runtimeAction: false
+      severity: 0
+      actionContract: notify.alert.emit
+      allowedPaths: [runtime, report]
+      reversible: false
+      safeLocalDefault: true
+    - id: notify.case.create
+      category: notify
+      domain: case
+      effect: notify
+      runtimeAction: false
+      severity: 0
+      actionContract: notify.case.create
+      allowedPaths: [runtime, report]
+      requiresApproval: false
+      reversible: false
+      safeLocalDefault: false
     - id: observe.metric.baseline
       category: observe
       domain: metric
@@ -339,4 +361,3 @@ spec:
       allowedPaths: [runtime]
       reversible: true
       safeLocalDefault: false
-

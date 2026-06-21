@@ -127,7 +127,7 @@ allow group "kernloom-admins" to access "ziti-controller"
 require "subject.risk.level" eq "low"
 require "session.authentication.strength" in ["mfa", "phishing_resistant_mfa"]
 default deny access to "ziti-controller"
-when denied access to "ziti-controller" exceeds 5 within 15m then alert
+when denied access to "ziti-controller" exceeds 5 within 15m then alert route "security-ops" severity "medium" dedupe 15m
 never auto_block group "kernloom-admins"
 ```
 
@@ -145,23 +145,24 @@ The compiler should split this into canonical artifacts:
 - each `when ... then ...` becomes one runtime response rule or report action.
 - `never` and `max action` become safety guardrails or enforcement constraints.
 
-Multiple `when ... then ...` statements are allowed. In the current runtime
-contract, each compiled `RuntimePolicyPack.spec.rules[]` has one `when` and one
-`then`. If one natural rule names several actions, Forge should expand it into
-several runtime rules with the same `when`, unless a future ordered action group
-contract is added.
+Multiple `when ... then ...` statements are allowed. Response rules should be
+compiled into `RuntimePolicyPack.spec.response_rules[]`. If one natural rule
+names several actions, Forge should expand it into several response rules with
+the same trigger, unless a future ordered action group contract is added.
 
 Do not use `when ... then ...` for access requirements such as low risk or MFA.
 Use `require` for access conditions and `when ... then ...` for response
 behavior after something is observed.
 
-`alert` is only a natural alias. The standard response vocabulary comes from
+`alert` is a routed notification action, not a signal alias. The standard
+response vocabulary comes from
 `registries/actions/runtime-action-contracts.yaml` and
 `registries/capabilities/canonical-capabilities.yaml`.
 
 | Natural action | Canonical ID | Notes |
 |---|---|---|
-| `alert` | `observe.signal.emit` | Emit/raise an observable signal. |
+| `alert route "security-ops" severity "medium" dedupe 15m` | `notify.alert.emit` | Emit a routed, deduplicated operator alert. |
+| `create case` | `notify.case.create` | Create or request an incident/case through a route or case backend. |
 | `finding` | `export.finding` | Export a reportable finding. |
 | `rate_limit` | `enforce.network.rate_limit` | Soft, reversible runtime restriction. |
 | `connection_limit` | `enforce.traffic.connection_limit` | Soft traffic restriction. |

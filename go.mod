@@ -3,6 +3,6 @@ module github.com/kernloom/kernloom-registries
 go 1.23
 
 require (
-	github.com/kernloom/kernloom-contracts v0.2.0
+	github.com/kernloom/kernloom-contracts v0.3.1
 	gopkg.in/yaml.v3 v3.0.1
 )

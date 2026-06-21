@@ -1,5 +1,5 @@
-github.com/kernloom/kernloom-contracts v0.2.0 h1:1zLd0W1awr7dOfV99x9t47Ca4pvRU9toZiUCyssaYl4=
-github.com/kernloom/kernloom-contracts v0.2.0/go.mod h1:MivRdravn+GJYmQgC5j2wjTsHaN2lWFnxEVm9hwoui8=
+github.com/kernloom/kernloom-contracts v0.3.1 h1:HfxI3ua1q0zxgn2NdyywmYjICOy/Z9zTNnXu+oxut1M=
+github.com/kernloom/kernloom-contracts v0.3.1/go.mod h1:MivRdravn+GJYmQgC5j2wjTsHaN2lWFnxEVm9hwoui8=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=

@@ -218,4 +218,29 @@ spec:
       requiresApproval: true
       reversible: true
       canGrantAccess: true
-
+    - id: notify.alert.emit
+      level: observe
+      effect: notify
+      monotonicity: no_enforcement_change
+      runtimeAllowed: false
+      configPathOnly: false
+      requiresTTL: false
+      requiresLease: false
+      requiresAudit: true
+      reversible: false
+      allowedDecisionSources: [kliq, correlate]
+      requiredConfidence: medium
+      canGrantAccess: false
+    - id: notify.case.create
+      level: observe
+      effect: notify
+      monotonicity: no_enforcement_change
+      runtimeAllowed: false
+      configPathOnly: false
+      requiresTTL: false
+      requiresLease: false
+      requiresAudit: true
+      reversible: false
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
