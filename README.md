@@ -16,6 +16,8 @@ and not the wire-contract module.
 - Structured condition types and operators.
 - Canonical context keys for risk, device, session and network facts.
 - Runtime action contracts for TTL-bounded local actions.
+- Detection evaluator, missing-context, guardrail, gap-handling and alert-route
+  binding vocabularies.
 - Metrics, signals, scopes, labels and risk levels used by KLIQ.
 - Registry snapshots embedded in managed RuntimeBundles.
 
@@ -45,6 +47,13 @@ mode.
   types and their allowed context keys.
 - `registries/policy/operators.yaml`: structured condition operators and their
   CEL meaning.
+- `registries/policy/detection-evaluators.yaml`: detection evaluator classes
+  and state requirements.
+- `registries/policy/missing-context-behaviors.yaml`: standard missing/unknown
+  context behavior IDs.
+- `registries/policy/guardrail-types.yaml`: safety guardrail kinds.
+- `registries/policy/gap-handling-behaviors.yaml`: CapabilityRequirement gap
+  handling behavior IDs.
 - `registries/risk/risk-taxonomy.yaml`: risk levels, score ranges and quality
   semantics.
 - `registries/capabilities/canonical-capabilities.yaml`: canonical capability
@@ -74,6 +83,8 @@ mode.
   activation requirements.
 - `registries/security/trust-boundaries.yaml`: runtime trust-boundary
   requirements for Forge, KLIQ and adapters.
+- `registries/notifications/notification-bindings.yaml`: alert channel and case
+  backend binding IDs.
 
 ## Validation
 
@@ -99,8 +110,9 @@ namespace, but enterprise policy intent and managed RuntimePolicyPacks must use
 canonical registry IDs unless an explicit, versioned mapping declares a
 downgrade or vendor delegation.
 
-Policy authoring tools may offer a more natural policy language, but that
-language must compile into the canonical policy kinds and values defined here.
+Policy authoring tools should use Natural Intent as the human-facing language.
+That language must compile into the canonical policy kinds and values defined
+here before Forge plans, signs, or serves runtime artifacts.
 For AccessPolicy, `any` is a policy selector/wildcard, not a canonical
 `subject.type` or `resource.type` context value. `endpoint` is a canonical
 resource type for host, IP or IP:port resources.

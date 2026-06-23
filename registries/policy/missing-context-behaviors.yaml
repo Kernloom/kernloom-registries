@@ -1,0 +1,34 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: Registry
+metadata:
+  name: kernloom-missing-context-behaviors
+  version: "0.2.0"
+spec:
+  behaviors:
+    - id: deny
+      appliesTo: [RequirementPolicy]
+      meaning: Missing context fails an access requirement.
+
+    - id: not_match
+      appliesTo: [DetectionPolicy]
+      meaning: Missing context does not satisfy this detection condition.
+
+    - id: degrade_to_alert
+      appliesTo: [RequirementPolicy, DetectionPolicy, ResponsePolicy]
+      meaning: Use notification/reporting instead of hard enforcement.
+
+    - id: degrade_to_rate_limit
+      appliesTo: [ResponsePolicy]
+      meaning: Use bounded rate limiting instead of hard blocking when hard-action target context is unknown.
+
+    - id: require_review
+      appliesTo: [RequirementPolicy, CapabilityRequirement, ResponsePolicy]
+      meaning: Compile/report as requiring human or Config PDP approval.
+
+    - id: fail_validation
+      appliesTo: [RequirementPolicy, CapabilityRequirement, DetectionPolicy]
+      meaning: Forge must reject the authored or compiled artifact.
+
+    - id: reject_hard_action
+      appliesTo: [ResponsePolicy, GuardrailPolicy]
+      meaning: Runtime must reject hard/block actions when target context is unknown.

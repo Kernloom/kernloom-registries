@@ -6,13 +6,13 @@ metadata:
 spec:
   files:
     - path: registries/actions/runtime-action-contracts.yaml
-      digest: sha256:7a56b8f7b20b952fbb6059590ccfaf8e389668657a14f2d260a5d9dafe6640bb
+      digest: sha256:bb93aa8b105b2a5ab11740bdecfa6e2548326a7316d6b269233d1e8ff79a05bf
     - path: registries/actions/runtime-actions.yaml
       digest: sha256:ae0872a47820a00038efb43d9ef3ea4fe89dd09b00f266579a2d9cf225d060ad
     - path: registries/adapters/adapter-sdk.yaml
       digest: sha256:71abd5818ed2ec56df0bf27fa1c93cc8481b725ad5522a45f848188407427550
     - path: registries/capabilities/canonical-capabilities.yaml
-      digest: sha256:4692a99e4d8a94d6719fd51c2c87fa2f35b9733db29a48fb02361deab42804f4
+      digest: sha256:7c9a872b6a74f2ba2e7511098bedae3ab3214484fc8037e0a6454cc62527b019
     - path: registries/compatibility/runtime-contracts.yaml
       digest: sha256:b41457fae86a634389cff68760c3823a44505a2f57038ec71b38646a8342b1f7
     - path: registries/context/canonical-keys.yaml
@@ -20,17 +20,27 @@ spec:
     - path: registries/granularity/canonical-granularities.yaml
       digest: sha256:bc11ea2af53343cab3773716d9c52cf3b4c67e33db610de69d36fc93a8b3ea8b
     - path: registries/mappings/gap-taxonomy.yaml
-      digest: sha256:347125d5c68934155629f1e4d0f082a67b2ab1ed4f8a2b61444206462a6e92b4
+      digest: sha256:20987bc11fe2d9d5cea81c62ab6c214a7c70aeaa76841c0ba7a722d93c0ef347
     - path: registries/mappings/support-taxonomy.yaml
       digest: sha256:7ae3fc559610694ae64a90c2b11c49423ddc13ab7717e5e6624a55ba8a987849
     - path: registries/metrics/canonical-metrics.yaml
       digest: sha256:82e8afc771a06cfafc86c5cd536f0d0031b85aa128646bf305669d0ef5d1f290
     - path: registries/metrics/label-policies.yaml
       digest: sha256:48f51088715c0fec7ca9a5b9128642b36d6d35be283ddadb6a013c8b8d4e3c36
+    - path: registries/notifications/notification-bindings.yaml
+      digest: sha256:bccfd09b86ac8ba0185b0f7cd741d85274c18542c23fe2ab7e74ce56014dde07
     - path: registries/policy/access-policy-schema.yaml
       digest: sha256:be75357f22020466a02ca0e4332c59f3dc35b128951f6703077dec7e63d8fdc8
     - path: registries/policy/condition-types.yaml
       digest: sha256:7ec17df4263561fc030084a73da36b836ab5321d85907f06e0ff4bb17d78efb2
+    - path: registries/policy/detection-evaluators.yaml
+      digest: sha256:b81c1c873d5f8b23f0e09062b4522333d682714ae7260fbe2be4d9176b31e321
+    - path: registries/policy/gap-handling-behaviors.yaml
+      digest: sha256:d3bb6e7bb10875e233c573adc9fe81cd4cae2163f22d4e69aa58cbf87a18bd63
+    - path: registries/policy/guardrail-types.yaml
+      digest: sha256:d3db44c7196ae9403de9ef9c435708bd83cf9195d59741a36443b677c8008deb
+    - path: registries/policy/missing-context-behaviors.yaml
+      digest: sha256:133f6417d7efe07bb6bd9c6625bc2bef645b49aa0b9932997a304372d3c31078
     - path: registries/policy/operators.yaml
       digest: sha256:96811f13fcf26c048856a853677cc492e6bc809275e8fc180c829259973cc782
     - path: registries/policy/policy-kinds.yaml

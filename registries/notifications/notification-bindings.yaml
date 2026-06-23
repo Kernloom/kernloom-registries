@@ -1,0 +1,16 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: Registry
+metadata:
+  name: kernloom-notification-bindings
+  version: "0.2.0"
+spec:
+  channels:
+    - id: log
+      refPrefixes: [log., stdout, stderr]
+    - id: email
+      refPrefixes: [channel., mailinglist., email.]
+  caseSystems:
+    - id: incident_backend
+    - id: case_backend
+    - id: servicenow
+    - id: jira

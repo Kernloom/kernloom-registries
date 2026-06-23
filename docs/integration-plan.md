@@ -6,8 +6,11 @@
   vocabulary.
 - Forge can include a registry snapshot in signed RuntimeBundles.
 - KLIQ consumes registry snapshots on the managed runtime path.
-- Source baselines, RuntimePDP facts and RuntimePolicyPacks still need a fuller
-  runtime fact/context registry.
+- Policy-intent vocabulary now includes registries for detection evaluators,
+  missing-context behavior, guardrail types, gap handling, and notification
+  bindings.
+- RuntimePDP facts and RuntimePolicyPacks have deterministic P1 context/risk
+  fixtures; production PIP expansion remains a later phase.
 - Local development may use workspace replaces. Release modules must not.
 
 ## Phase 1: Move Defaults Into Registries
@@ -31,6 +34,11 @@ Add a Forge registry loader package that reads this repo layout and produces:
 - signal registry;
 - capability registry;
 - runtime action registry;
+- detection evaluator registry;
+- missing-context behavior registry;
+- guardrail type registry;
+- gap-handling behavior registry;
+- notification binding registry;
 - risk taxonomy;
 - taxonomy bundle;
 - registry digest.
@@ -42,6 +50,9 @@ Forge compiler checks:
 - `any` is handled as wildcard selector, not as a canonical entity type;
 - condition types and structured operators are known;
 - policy condition keys exist;
+- RequirementPolicy missing/freshness/confidence behavior is explicit;
+- DetectionPolicy evaluator and state requirements are explicit;
+- CapabilityRequirement gaps can make a target non-deployable;
 - enum values are valid;
 - required capabilities are canonical or explicitly mapped;
 - runtime actions are restrictive and within profile bounds;
@@ -57,6 +68,8 @@ KLIQ needs the managed runtime view:
 - metric IDs, entity scopes, visibility scopes, labels and retention class;
 - signal IDs, evidence requirements and suggested responses;
 - runtime action capability IDs, severity, max levels and action contracts;
+- detection evaluator and missing-context behavior IDs relevant to runtime
+  response/detection validation;
 - label policies;
 - risk levels and risk quality thresholds;
 - scopes and granularities.

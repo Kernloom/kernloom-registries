@@ -5,6 +5,14 @@ metadata:
   version: "0.2.0"
 spec:
   gapTypes:
+    - id: none
+      severityDefault: none
+    - id: missing_context
+      severityDefault: high
+    - id: unsupported_access_semantics
+      severityDefault: high
+    - id: identity_to_ip_downgrade
+      severityDefault: high
     - id: granularity_gap
       severityDefault: medium
     - id: semantic_downgrade
@@ -23,4 +31,3 @@ spec:
       severityDefault: high
     - id: audit_gap
       severityDefault: high
-

@@ -200,6 +200,21 @@ spec:
       allowedDecisionSources: [correlate]
       requiredConfidence: high
       canGrantAccess: false
+    - id: enforce.identity.disable
+      level: block
+      effect: restrictive
+      monotonicity: restrict_only
+      runtimeAllowed: true
+      requiresTTL: true
+      defaultTTL: 5m
+      maxTTL: 30m
+      requiresLease: true
+      requiresAudit: true
+      autoRevert: required
+      reversible: true
+      allowedDecisionSources: [correlate]
+      requiredConfidence: high
+      canGrantAccess: false
     - id: enforce.access.allow
       level: observe
       effect: grant

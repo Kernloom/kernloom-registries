@@ -292,6 +292,20 @@ spec:
         resource: [node, service_identity, ip_port]
       reversible: true
       safeLocalDefault: false
+    - id: enforce.identity.disable
+      category: enforce
+      domain: identity
+      effect: restrictive
+      runtimeAction: true
+      severity: 3
+      actionContract: enforce.identity.disable
+      allowedPaths: [runtime]
+      requiredGranularity:
+        subject: [user_identity, workload_identity, device_identity]
+        resource: [user_identity, workload_identity, device_identity]
+      requiresApproval: true
+      reversible: true
+      safeLocalDefault: false
     - id: observe.signal.emit
       category: observe
       domain: signal

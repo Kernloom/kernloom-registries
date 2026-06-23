@@ -1,0 +1,26 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: Registry
+metadata:
+  name: kernloom-detection-evaluators
+  version: "0.2.0"
+spec:
+  evaluators:
+    - id: stateless
+      stateRequired: false
+      allowedRuntimes: [kliq-local-stateless, correlate]
+      description: Single-event or current-fact evaluation.
+
+    - id: windowed
+      stateRequired: true
+      allowedRuntimes: [kliq-local-windowed, correlate]
+      description: Sliding-window counters, thresholds, and dedupe state.
+
+    - id: stateful_sequence
+      stateRequired: true
+      allowedRuntimes: [kliq-local-stateful, correlate]
+      description: Ordered multi-step detections over runtime state.
+
+    - id: external_signal
+      stateRequired: false
+      allowedRuntimes: [kliq-signal, correlate]
+      description: Detection is satisfied by a normalized external signal.

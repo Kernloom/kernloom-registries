@@ -1,0 +1,18 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: Registry
+metadata:
+  name: kernloom-guardrail-types
+  version: "0.2.0"
+spec:
+  guardrails:
+    - id: never
+      description: A protected subject or scope must never receive matching runtime actions.
+      requiredFields: [subject, forbiddenActions, enforcement]
+
+    - id: max_action
+      description: Caps the strongest runtime action allowed for a subject, resource, or phase.
+      requiredFields: [appliesTo, maxAction, enforcement]
+
+    - id: blast_radius
+      description: Requires hard responses to exclude protected subjects or reject unknown target context.
+      requiredFields: [excludes, unknownBehavior]

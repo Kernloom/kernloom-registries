@@ -14,6 +14,18 @@ spec:
       status: stable
       schema: schemas/access-policy.schema.json
       description: Subject-to-resource access intent with conditions, effect and enforcement constraints.
+    - id: policy_intent
+      wireKind: PolicyIntent
+      status: experimental
+      description: Thin composition manifest that groups canonical policy documents under one operator intent.
+    - id: requirement_policy
+      wireKind: RequirementPolicy
+      status: planned
+      description: Planned reusable context and assurance requirements shared by access, detection and response policies.
+    - id: capability_requirement
+      wireKind: CapabilityRequirement
+      status: planned
+      description: Planned explicit target capability and fidelity requirements for policy compilation.
     - id: guardrail_policy
       wireKind: GuardrailPolicy
       status: experimental

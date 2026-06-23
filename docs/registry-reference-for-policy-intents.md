@@ -3,18 +3,28 @@
 This reference explains what each Kernloom registry defines and where it is
 used when you write a policy intent, a target profile, or an adapter mapping.
 
-Short version: an `AccessPolicy` describes business intent. A target
-(`TargetIntegrationProfile`) describes how a concrete adapter may carry that
-intent. Adapter manifests and mappings describe what the target can really do.
-Forge connects these layers and creates reports, `RuntimePolicyPack`s, or
-signed `RuntimeBundle`s.
+Short version: humans should normally write Natural Intent. Forge compiles that
+text into canonical policy documents such as `AccessPolicy`, `GuardrailPolicy`,
+`DetectionPolicy`, `ResponsePolicy`, `AlertRoute`, and a thin `PolicyIntent`
+manifest. A target (`TargetIntegrationProfile`) describes how a concrete
+adapter may carry that intent. Adapter manifests and mappings describe what the
+target can really do. Forge connects these layers and creates reports,
+`RuntimePolicyPack`s, or signed `RuntimeBundle`s.
+
+For copy/paste Natural Intent vocabulary, use
+`../../kernloom-forge/docs/natural-intent-vocabulary-cheat-sheet.md`. This
+document stays the registry and standards reference.
 
 ## Quick Rules
 
 - Use `require` for access conditions such as low risk, MFA or healthy device.
 - Use `when ... then ...` for response behavior after something is observed.
-- `AccessPolicy` is the canonical policy intent format.
-- Natural intent must compile to canonical YAML before Forge plans or bundles.
+- Natural Intent is the human authoring format.
+- `AccessPolicy` is the generated canonical access intent format.
+- `PolicyIntent` may group access, guardrail, detection, response and alert
+  route documents. It does not replace those documents.
+- Natural Intent must compile to canonical documents before Forge plans or
+  bundles.
 - KLIQ loads `RuntimePolicyPack` or signed `RuntimeBundle`, not natural intent
   text.
 - Missing or unknown context must be reported; it must not silently become a
@@ -24,7 +34,7 @@ signed `RuntimeBundle`s.
 
 | Layer | Artifact | Uses Registries For |
 |---|---|---|
-| Policy intent | `kind: AccessPolicy` | Policy kind, subject/resource selectors, actions, effects, condition types, operators, context keys, risk/posture values, constraints |
+| Policy intent | Natural Intent, then `kind: PolicyIntent` / `kind: AccessPolicy` | Policy kind, subject/resource selectors, actions, effects, condition types, operators, context keys, risk/posture values, constraints |
 | Target | `kind: TargetIntegrationProfile` | Allowed runtime actions, runtime mode, ownership, safety constraints |
 | Adapter | Capability, action, and mapping manifests | Metrics/signals, capabilities, support levels, downgrades |
 | Forge output | `EnforcementPlan`, report, `RuntimePolicyPack`, `RuntimeBundle` | Compiled coverage, runtime rules, registry snapshot |
@@ -34,10 +44,14 @@ signed `RuntimeBundle`s.
 
 | Registry | File | Defines | Use In Policy Intent / Target |
 |---|---|---|---|
-| Policy Kinds | `registries/policy/policy-kinds.yaml` | Supported policy document kinds such as `AccessPolicy`, `GuardrailPolicy`, `DetectionPolicy`, `ResponsePolicy`, and `AlertRoute`, plus shared envelope fields, status, and schema links. | `apiVersion: kernloom.io/v1` and `kind: AccessPolicy` come from this layer. Natural policy languages must compile to these canonical kinds. |
+| Policy Kinds | `registries/policy/policy-kinds.yaml` | Supported policy document kinds such as `PolicyIntent`, `AccessPolicy`, `GuardrailPolicy`, `DetectionPolicy`, `ResponsePolicy`, and `AlertRoute`, plus shared envelope fields, status, and schema links. | `apiVersion: kernloom.io/v1`, `kind: PolicyIntent`, and `kind: AccessPolicy` come from this layer. Natural Intent compiles to these canonical kinds. |
 | AccessPolicy Schema | `registries/policy/access-policy-schema.yaml` and `schemas/access-policy.schema.json` | AccessPolicy selectors, `action: access`, effects `allow` and `deny`, enforcement constraint fields, and the decision that `any` is a selector/wildcard. | Validates the shape of an `AccessPolicy`. `subject.type: any` means wildcard selector; it is not a canonical `subject.type` context value. |
 | Condition Types | `registries/policy/condition-types.yaml` | Condition classes such as `authentication_strength`, `risk_level`, `device_posture`, `network_tuple`, `session_context`, and their allowed context keys. | Directly in `AccessPolicy.spec.conditions[].type`. Example: `type: network_tuple` may use `network.source`, `network.destination`, `network.protocol`, or `network.port`. |
 | Operators | `registries/policy/operators.yaml` | Structured operators `eq`, `neq`, `gte`, `lte`, `gt`, `lt`, `in`, `not_in` and their CEL meaning. | Directly in `AccessPolicy.spec.conditions[].operator`. Forge converts structured conditions into equivalent CEL when needed. |
+| Detection Evaluators | `registries/policy/detection-evaluators.yaml` | Detection execution classes: `stateless`, `windowed`, `stateful_sequence`, `external_signal`, including whether runtime state is required. | Used by `DetectionPolicy.spec.evaluator` and compiled runtime detection params. Windowed detections require a runtime that can keep deterministic local or central state. |
+| Missing Context Behaviors | `registries/policy/missing-context-behaviors.yaml` | Standard behaviors such as `deny`, `not_match`, `degrade_to_alert`, `require_review`, `fail_validation`, and `reject_hard_action`. | Used by `RequirementPolicy`, `DetectionPolicy`, `ResponsePolicy`, guardrails, and runtime blast-radius checks. Missing context must remain distinct from false. |
+| Guardrail Types | `registries/policy/guardrail-types.yaml` | Safety invariant kinds such as `never`, `max_action`, and `blast_radius`. | Natural guardrails and response blast-radius requirements compile into runtime guardrails or response action requirements. |
+| Gap Handling Behaviors | `registries/policy/gap-handling-behaviors.yaml` | Compile/report behaviors for gaps: `fail`, `fail_closed`, `require_approval`, `require_review`, `degrade_to_alert`, `warn`. | Used by `CapabilityRequirement.spec.gapHandling` to decide whether a target remains deployable. |
 | Context Keys | `registries/context/canonical-keys.yaml` | Canonical facts such as `subject.risk.level`, `device.posture.status`, `session.authentication.strength`, `network.protocol`, `network.port`, including type, values, scope, TTL, and source. | Directly in `AccessPolicy.spec.conditions[].signal`. Example: `signal: subject.risk.level`, `operator: eq`, `value: low`. Forge checks whether an adapter or runtime path can provide or compensate this meaning. |
 | Risk Taxonomy | `registries/risk/risk-taxonomy.yaml` | Risk levels `low`, `medium`, `high`, `critical`, `unknown`, score ranges, quality fields, and minimum quality per action level. | Used through context keys such as `subject.risk.level`; KLIQ also uses it for local risk and action gates. `unknown` means not enough evidence and must not be treated as `low`. |
 | Canonical Capabilities | `registries/capabilities/canonical-capabilities.yaml` | Neutral capabilities such as `observe.network.flow`, `assess.risk.local`, `enforce.access.deny`, `enforce.traffic.rate_limit`, including runtime eligibility, effect, severity, granularity, and allowed paths. | Usually not written directly in `AccessPolicy`. Used by Forge output, target profiles, adapter mappings, and runtime packs. Grant actions such as `enforce.network.allow` are config/proposal-only, not runtime actions. |
@@ -54,12 +68,14 @@ signed `RuntimeBundle`s.
 | Adapter SDK | `registries/adapters/adapter-sdk.yaml` | Adapter roles such as `pip_read`, `signal_engine`, `risk_engine`, `pep`, `config_adapter`; target types; and required manifest fields. | Not used directly in `AccessPolicy`. It is the checklist for new adapters: which roles, metrics, signals, actions, labels, and trust boundary they must declare before Forge can use them as a target. |
 | Runtime Compatibility | `registries/compatibility/runtime-contracts.yaml` | Runtime contract versions, required `registry_snapshot` fields, and activation rules such as reject unsigned, expired, rollback, unknown action, unknown metric, forbidden label. | Managed mode: Forge embeds the snapshot in `RuntimeBundle`s. KLIQ validates against that snapshot and rejects invalid bundles. |
 | Trust Boundaries | `registries/security/trust-boundaries.yaml` | Trust roles `forge`, `kliq`, `pip_adapter`, `pep_adapter`, `config_adapter`, `vendor_control_plane`, and runtime/adapter security requirements. | Policy intent does not describe the trust boundary itself. Targets and adapters must meet it: Forge signs, KLIQ verifies locally, runtime actions need provenance and receipts, and learned state must not override signed policy. |
+| Notification Bindings | `registries/notifications/notification-bindings.yaml` | Alert channel types, allowed reference prefixes, and case-management backends. | Used by `AlertRoute` and `notify.alert.emit` validation. Natural Intent may use short channel names, but compiled routes must bind to registered channel types. |
 
 ## Which Registries Do I Use When Writing A Policy?
 
-For a normal `AccessPolicy`, these registries are directly visible:
+When writing Natural Intent, these registries define the vocabulary and the
+canonical documents Forge will generate:
 
-- Policy Kinds and AccessPolicy Schema for `apiVersion`, `kind`,
+- Policy Kinds and AccessPolicy Schema for the generated `apiVersion`, `kind`,
   `subject.type`, `resource.type`, `action` and `effect`.
 - Entity Taxonomy for canonical subject and resource types. Forge selectors such
   as `role` or `group` must later map to canonical subjects.
@@ -70,7 +86,17 @@ For a normal `AccessPolicy`, these registries are directly visible:
 - Support, Gap, and Granularity indirectly when `enforcementConstraints` decide
   whether downgrades or delegation are allowed.
 
-Example:
+Natural authoring example:
+
+```text
+protect application_group "admin-apps"
+allow user "admins" to access application_group "admin-apps"
+require "session.authentication.strength" eq "phishing_resistant_mfa"
+require "subject.risk.level" eq "low"
+require "device.posture.status" eq "healthy"
+```
+
+Generated `AccessPolicy` shape:
 
 ```yaml
 apiVersion: kernloom.io/v1
@@ -110,43 +136,44 @@ spec:
 
 Here, `AccessPolicy`, `access`, `allow`, the condition types and operators come
 from the Policy registries. `user` and `application_group` come from the Entity
-Taxonomy. If the policy uses `role`, `group`, or `any` as a subject selector
+Taxonomy. If Natural Intent uses `role`, `group`, or `any` as a subject selector
 instead, Forge must map it through IdP/CMDB context or wildcard behavior to
-canonical subjects. The three `signal` values come from Context Keys. `low` and
-the risk quality rules come from the Risk Taxonomy. Forge checks the constraints
-against support, gap, and granularity rules.
+canonical subjects. The three generated `signal` values come from Context Keys.
+`low` and the risk quality rules come from the Risk Taxonomy. Forge checks the
+constraints against support, gap, and granularity rules.
 
 ## Natural Policy Intent
 
-Operators may write a more natural intent language, but Forge must compile it
-to the canonical YAML model before planning or bundling. Example authoring text:
+Operators should normally write Natural Intent, but this file is not the
+Natural Intent language manual. Keep the split:
 
-```text
-protect "ziti-controller"
-allow group "kernloom-admins" to access "ziti-controller"
-require "subject.risk.level" eq "low"
-require "session.authentication.strength" in ["mfa", "phishing_resistant_mfa"]
-default deny access to "ziti-controller"
-when denied access to "ziti-controller" exceeds 5 within 15m then alert route "security-ops" severity "medium" dedupe 15m
-never auto_block group "kernloom-admins"
-```
+- Authoring vocabulary and copy/paste snippets:
+  `../../kernloom-forge/docs/natural-intent-vocabulary-cheat-sheet.md`
+- Runnable Forge/KLIQ examples:
+  `../../kernloom-forge/docs/policy-intent-examples.md`
+- Registry standard and canonical IDs: this document.
 
-Quotes around variable values are optional for simple IDs. They are useful
-because they make subjects, resources and environments visible and allow names
-with spaces without changing the policy meaning.
+Forge must compile Natural Intent to canonical policy documents and a
+digest-pinned `PolicyIntent` manifest before planning or bundling.
 
-The compiler should split this into canonical artifacts:
+Forge splits this into canonical artifacts:
 
-- `protect` and `allow` become an `AccessPolicy`.
-- `require` becomes `AccessPolicy.spec.conditions[]`. Multiple `require` lines
-  are conjunctive by default: all must hold for the allow intent.
+- `protect` and `allow` become `AccessPolicy`.
+- `requirements ... require ...` becomes `RequirementPolicy`. Multiple
+  requirements are conjunctive by default: all must hold for the allow intent.
 - `default deny` becomes target policy default behavior or a runtime pack
   `default_effect`, depending on target support.
 - `when ... exceeds ... within ...` may become a `DetectionPolicy`.
 - `then alert ...`, `then rate_limit ...`, and similar reactions may become a
   `ResponsePolicy`.
-- alert routing details belong in an `AlertRoute`.
+- alert routing details become or reference an `AlertRoute`.
 - `never` and `max action` become safety guardrails or enforcement constraints.
+- `require previous action ... active` becomes previous-action state in the
+  compiled response action. KLIQ may use runtime response state and, when
+  explicitly allowed, local enforcement state as evidence.
+- `require enforcement target excludes group ...` becomes blast-radius
+  metadata. Hard actions must be rejected when the protected group cannot be
+  ruled out and the policy says `reject_hard_action`.
 
 Multiple `when ... then ...` statements are allowed. Detections should compile
 into `RuntimePolicyPack.spec.detection_rules[]`. Response rules should compile
@@ -158,30 +185,13 @@ Do not use `when ... then ...` for access requirements such as low risk or MFA.
 Use `require` for access conditions and `when ... then ...` for response
 behavior after something is observed.
 
-`alert` is a routed notification action, not a signal alias. The standard
-response vocabulary comes from
-`registries/actions/runtime-action-contracts.yaml` and
-`registries/capabilities/canonical-capabilities.yaml`.
-
-| Natural action | Canonical ID | Notes |
-|---|---|---|
-| `alert route "security-ops" severity "medium" dedupe 15m` | `notify.alert.emit` | Emit a routed, deduplicated operator alert. |
-| `create case` | `notify.case.create` | Create or request an incident/case through a route or case backend. |
-| `finding` | `export.finding` | Export a reportable finding. |
-| `rate_limit` | `enforce.network.rate_limit` | Soft, reversible runtime restriction. |
-| `connection_limit` | `enforce.traffic.connection_limit` | Soft traffic restriction. |
-| `bandwidth_limit` | `enforce.traffic.bandwidth_limit` | Soft traffic restriction. |
-| `syn_protect` | `enforce.network.syn_protect` | Soft network protection. |
-| `deny` or `block` | `enforce.access.deny` | Block-level access restriction. |
-| `network_deny` | `enforce.network.deny` | Block-level network restriction. |
-| `drop` | `enforce.traffic.drop` | Block-level traffic restriction. |
-| `tarpit` | `enforce.traffic.tarpit` | Hard traffic restriction. |
-| `quarantine` | `enforce.network.quarantine` | Block-level isolation/quarantine. |
-
-Natural intent may also use canonical IDs directly, for example
-`then enforce.traffic.drop for 5m`. Granting actions such as
-`enforce.network.allow` are config/proposal-only, not local runtime response
-actions.
+`alert` is a routed notification action, not a signal alias. Response action
+vocabulary is defined by `registries/actions/runtime-action-contracts.yaml` and
+`registries/capabilities/canonical-capabilities.yaml`. Natural Intent may use
+short aliases, but the compiled runtime pack must contain canonical IDs such as
+`notify.alert.emit`, `enforce.traffic.rate_limit` or `enforce.traffic.drop`.
+Granting actions such as `enforce.network.allow` are config/proposal-only, not
+local runtime response actions.
 
 ## Which Registries Do I Use When Writing A Target?
 

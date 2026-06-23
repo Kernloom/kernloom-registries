@@ -1,0 +1,30 @@
+apiVersion: kernloom.io/registry/v1alpha1
+kind: Registry
+metadata:
+  name: kernloom-gap-handling-behaviors
+  version: "0.2.0"
+spec:
+  behaviors:
+    - id: fail
+      deployable: false
+      description: Target is not deployable when the gap exists.
+
+    - id: fail_closed
+      deployable: false
+      description: Equivalent to fail, explicitly preferring closed behavior.
+
+    - id: require_approval
+      deployable: false
+      description: Target requires explicit approval before deployment.
+
+    - id: require_review
+      deployable: false
+      description: Target must be reviewed before deployment.
+
+    - id: degrade_to_alert
+      deployable: true
+      description: Use alerting/reporting instead of hard enforcement.
+
+    - id: warn
+      deployable: true
+      description: Keep deployable but report the gap.

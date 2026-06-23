@@ -81,6 +81,34 @@ func LoadSnapshotFS(fsys fs.FS, revision string) (contracts.RegistrySnapshot, er
 	if err != nil {
 		return contracts.RegistrySnapshot{}, err
 	}
+	accessPolicySchemaReg, err := loadAccessPolicySchemas(fsys, "registries/policy/access-policy-schema.yaml")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
+	detectionEvaluatorReg, err := loadDetectionEvaluators(fsys, "registries/policy/detection-evaluators.yaml")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
+	missingContextReg, err := loadPolicyVocabulary(fsys, "registries/policy/missing-context-behaviors.yaml", "behaviors")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
+	guardrailTypeReg, err := loadPolicyVocabulary(fsys, "registries/policy/guardrail-types.yaml", "guardrails")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
+	gapHandlingReg, err := loadPolicyVocabulary(fsys, "registries/policy/gap-handling-behaviors.yaml", "behaviors")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
+	gapTypeReg, err := loadGapTaxonomy(fsys, "registries/mappings/gap-taxonomy.yaml")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
+	notificationReg, err := loadNotificationBindings(fsys, "registries/notifications/notification-bindings.yaml")
+	if err != nil {
+		return contracts.RegistrySnapshot{}, err
+	}
 
 	snap := contracts.RegistrySnapshot{
 		Ref: contracts.RegistryRef{
@@ -88,19 +116,26 @@ func LoadSnapshotFS(fsys fs.FS, revision string) (contracts.RegistrySnapshot, er
 			Version:  Version,
 			Revision: revision,
 		},
-		ContextVersion:   contextReg.Metadata.Version,
-		ContextKeys:      contextReg.Spec.Keys,
-		RiskLevels:       riskReg.Spec.Levels,
-		RiskTaxonomy:     riskReg.Spec.Snapshot(),
-		Capabilities:     capReg.Spec.Capabilities,
-		ActionLevels:     actionReg.Spec.Levels,
-		ActionContracts:  actionContractReg.Spec.Contracts,
-		Signals:          signalReg.Spec.Signals,
-		Metrics:          metricReg.Spec.Metrics,
-		LabelPolicies:    labelReg.Spec.Labels,
-		RetentionClasses: labelReg.Spec.RetentionClasses,
-		Granularities:    granularityReg.Spec.Granularities,
-		Scopes:           scopeReg.Spec,
+		ContextVersion:          contextReg.Metadata.Version,
+		ContextKeys:             contextReg.Spec.Keys,
+		RiskLevels:              riskReg.Spec.Levels,
+		RiskTaxonomy:            riskReg.Spec.Snapshot(),
+		Capabilities:            capReg.Spec.Capabilities,
+		ActionLevels:            actionReg.Spec.Levels,
+		ActionContracts:         actionContractReg.Spec.Contracts,
+		Signals:                 signalReg.Spec.Signals,
+		Metrics:                 metricReg.Spec.Metrics,
+		LabelPolicies:           labelReg.Spec.Labels,
+		RetentionClasses:        labelReg.Spec.RetentionClasses,
+		Granularities:           granularityReg.Spec.Granularities,
+		Scopes:                  scopeReg.Spec,
+		AccessPolicySchemas:     accessPolicySchemaReg.Spec.Schemas,
+		DetectionEvaluators:     detectionEvaluatorReg.Spec.Evaluators,
+		MissingContextBehaviors: missingContextReg.Entries,
+		GuardrailTypes:          guardrailTypeReg.Entries,
+		GapHandlingBehaviors:    gapHandlingReg.Entries,
+		GapTypes:                gapTypeReg.Spec.GapTypes,
+		NotificationBindings:    notificationReg.Spec,
 	}
 	sortSnapshot(&snap)
 	digest, err := DigestSnapshot(snap)
@@ -254,6 +289,58 @@ func loadScopes(fsys fs.FS, path string) (scopeRegistry, error) {
 	return readYAML[scopeRegistry](fsys, path)
 }
 
+type accessPolicySchemaRegistry struct {
+	Spec struct {
+		Schemas []contracts.AccessPolicySchemaEntry `yaml:"schemas"`
+	} `yaml:"spec"`
+}
+
+func loadAccessPolicySchemas(fsys fs.FS, path string) (accessPolicySchemaRegistry, error) {
+	return readYAML[accessPolicySchemaRegistry](fsys, path)
+}
+
+type detectionEvaluatorRegistry struct {
+	Spec struct {
+		Evaluators []contracts.DetectionEvaluatorEntry `yaml:"evaluators"`
+	} `yaml:"spec"`
+}
+
+func loadDetectionEvaluators(fsys fs.FS, path string) (detectionEvaluatorRegistry, error) {
+	return readYAML[detectionEvaluatorRegistry](fsys, path)
+}
+
+type policyVocabularyRegistry struct {
+	Entries []contracts.PolicyVocabularyEntry
+}
+
+func loadPolicyVocabulary(fsys fs.FS, path, field string) (policyVocabularyRegistry, error) {
+	raw, err := readYAML[struct {
+		Spec map[string][]contracts.PolicyVocabularyEntry `yaml:"spec"`
+	}](fsys, path)
+	if err != nil {
+		return policyVocabularyRegistry{}, err
+	}
+	return policyVocabularyRegistry{Entries: raw.Spec[field]}, nil
+}
+
+type notificationBindingRegistry struct {
+	Spec contracts.NotificationBindingsSnapshot `yaml:"spec"`
+}
+
+func loadNotificationBindings(fsys fs.FS, path string) (notificationBindingRegistry, error) {
+	return readYAML[notificationBindingRegistry](fsys, path)
+}
+
+type gapTaxonomyRegistry struct {
+	Spec struct {
+		GapTypes []contracts.GapTypeEntry `yaml:"gapTypes"`
+	} `yaml:"spec"`
+}
+
+func loadGapTaxonomy(fsys fs.FS, path string) (gapTaxonomyRegistry, error) {
+	return readYAML[gapTaxonomyRegistry](fsys, path)
+}
+
 func sortSnapshot(s *contracts.RegistrySnapshot) {
 	sort.Slice(s.ContextKeys, func(i, j int) bool { return s.ContextKeys[i].ID < s.ContextKeys[j].ID })
 	sort.Slice(s.RiskLevels, func(i, j int) bool { return s.RiskLevels[i].ID < s.RiskLevels[j].ID })
@@ -269,6 +356,36 @@ func sortSnapshot(s *contracts.RegistrySnapshot) {
 	sort.Slice(s.LabelPolicies, func(i, j int) bool { return s.LabelPolicies[i].ID < s.LabelPolicies[j].ID })
 	sort.Slice(s.RetentionClasses, func(i, j int) bool { return s.RetentionClasses[i].ID < s.RetentionClasses[j].ID })
 	sort.Slice(s.Granularities, func(i, j int) bool { return s.Granularities[i].ID < s.Granularities[j].ID })
+	sort.Slice(s.AccessPolicySchemas, func(i, j int) bool { return s.AccessPolicySchemas[i].ID < s.AccessPolicySchemas[j].ID })
+	for i := range s.AccessPolicySchemas {
+		sort.Slice(s.AccessPolicySchemas[i].Actions, func(j, k int) bool {
+			return s.AccessPolicySchemas[i].Actions[j].ID < s.AccessPolicySchemas[i].Actions[k].ID
+		})
+		sort.Slice(s.AccessPolicySchemas[i].Effects, func(j, k int) bool {
+			return s.AccessPolicySchemas[i].Effects[j].ID < s.AccessPolicySchemas[i].Effects[k].ID
+		})
+		sort.Slice(s.AccessPolicySchemas[i].SubjectSelectorTypes, func(j, k int) bool {
+			return s.AccessPolicySchemas[i].SubjectSelectorTypes[j].ID < s.AccessPolicySchemas[i].SubjectSelectorTypes[k].ID
+		})
+		sort.Slice(s.AccessPolicySchemas[i].ResourceSelectorTypes, func(j, k int) bool {
+			return s.AccessPolicySchemas[i].ResourceSelectorTypes[j].ID < s.AccessPolicySchemas[i].ResourceSelectorTypes[k].ID
+		})
+		sort.Strings(s.AccessPolicySchemas[i].ConditionTypes)
+		sort.Strings(s.AccessPolicySchemas[i].Operators)
+		sort.Strings(s.AccessPolicySchemas[i].EnforcementConstraintFields)
+		sort.Strings(s.AccessPolicySchemas[i].Invariants)
+	}
+	sort.Slice(s.DetectionEvaluators, func(i, j int) bool { return s.DetectionEvaluators[i].ID < s.DetectionEvaluators[j].ID })
+	sort.Slice(s.MissingContextBehaviors, func(i, j int) bool { return s.MissingContextBehaviors[i].ID < s.MissingContextBehaviors[j].ID })
+	sort.Slice(s.GuardrailTypes, func(i, j int) bool { return s.GuardrailTypes[i].ID < s.GuardrailTypes[j].ID })
+	sort.Slice(s.GapHandlingBehaviors, func(i, j int) bool { return s.GapHandlingBehaviors[i].ID < s.GapHandlingBehaviors[j].ID })
+	sort.Slice(s.GapTypes, func(i, j int) bool { return s.GapTypes[i].ID < s.GapTypes[j].ID })
+	sort.Slice(s.NotificationBindings.Channels, func(i, j int) bool {
+		return s.NotificationBindings.Channels[i].ID < s.NotificationBindings.Channels[j].ID
+	})
+	sort.Slice(s.NotificationBindings.CaseSystems, func(i, j int) bool {
+		return s.NotificationBindings.CaseSystems[i].ID < s.NotificationBindings.CaseSystems[j].ID
+	})
 	sort.Slice(s.Scopes.EntityScopes, func(i, j int) bool { return s.Scopes.EntityScopes[i].ID < s.Scopes.EntityScopes[j].ID })
 	sort.Slice(s.Scopes.VisibilityScopes, func(i, j int) bool {
 		return s.Scopes.VisibilityScopes[i].ID < s.Scopes.VisibilityScopes[j].ID
