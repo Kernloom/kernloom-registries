@@ -9,6 +9,10 @@ spec:
       refPrefixes: [log., stdout, stderr]
     - id: email
       refPrefixes: [channel., mailinglist., email.]
+    - id: file
+      refPrefixes: [file., file://, ./, ../, /]
+    - id: jsonl
+      refPrefixes: [jsonl., file., file://, ./, ../, /]
   caseSystems:
     - id: incident_backend
     - id: case_backend

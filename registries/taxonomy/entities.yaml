@@ -54,9 +54,9 @@ spec:
   supportLevels:
     - full
     - partial
-    - conditional
-    - full_vendor_native
-    - not_supported
+    - delegated
+    - compensating_control
+    - unsupported
   fidelityLevels:
     - high
     - medium

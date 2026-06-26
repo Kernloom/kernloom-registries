@@ -8,18 +8,23 @@ spec:
     - id: full
       deployable: true
       requiresApproval: false
+      description: Adapter capability natively and fully enforces the requirement.
     - id: partial
       deployable: true
       requiresApproval: true
-    - id: conditional
+      description: Adapter approximates the requirement with reduced semantic fidelity.
+    - id: delegated
       deployable: true
       requiresApproval: true
-    - id: full_vendor_native
+      description: Vendor PDP evaluates a semantically equivalent condition natively.
+    - id: compensating_control
       deployable: true
-      requiresApproval: true
-    - id: not_supported
+      requiresApproval: false
+      description: Kernloom compensates for a target gap with a restrictive runtime action.
+    - id: unsupported
       deployable: false
       requiresApproval: false
+      description: No declared mapping can satisfy the requirement for this target.
   fidelityLevels:
     - id: high
       description: Canonical semantics are preserved.
@@ -40,4 +45,3 @@ spec:
     - runtime_decision_owner
     - enforcement_owner
     - durable_config_owner
-

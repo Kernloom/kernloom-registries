@@ -27,6 +27,7 @@ spec:
       requirementKind: device_posture
       aliases: [device_compliance]
       allowedSignals:
+        - device.management.status
         - device.posture.status
         - device.edr.status
         - device.attestation.status
@@ -52,6 +53,18 @@ spec:
         - session.network_zone
       allowedOperators: [eq, neq, in, not_in]
       description: Session-scoped context condition.
+    - id: resource_context
+      requirementKind: resource_identity
+      aliases: [resource_context, resource_metadata]
+      allowedSignals:
+        - resource.data_class
+        - resource.criticality
+        - resource.environment
+        - resource.exposure
+        - resource.owner
+        - resource.type
+      allowedOperators: [eq, neq, in, not_in]
+      description: Resource-scoped context such as data class, criticality, environment or exposure.
     - id: custom
       requirementKind: custom
       allowedOperators: [eq, neq, gte, lte, gt, lt, in, not_in]

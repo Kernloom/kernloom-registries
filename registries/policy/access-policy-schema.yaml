@@ -123,6 +123,7 @@ spec:
         - authentication_strength
         - risk_level
         - device_posture
+        - resource_context
         - network_tuple
         - session_context
         - custom
